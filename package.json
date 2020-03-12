@@ -11,6 +11,8 @@
     "next": "9.3.0",
     "react": "16.13.0",
     "react-dom": "16.13.0",
+    "react-google-login": "^5.1.1",
+    "react-redux": "^7.2.0",
     "styled-components": "^5.0.1",
     "styled-reset": "^4.1.1"
   },
