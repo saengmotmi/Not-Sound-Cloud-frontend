@@ -41,7 +41,6 @@ const SignModal = () => {
         <Modal>
           <p>모달 창</p>
           <p>모달창 열렸다</p>
-          <div onClick={onSignIn} className="g-signin2" data-onsuccess="onSignIn" />
           <button type="button" onClick={turnModalOff}>
             모달 창 닫자
           </button>

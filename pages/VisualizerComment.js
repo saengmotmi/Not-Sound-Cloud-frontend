@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import theme from '../global/theme';
 
-
+// visualizerComp에 병합 예정
 const VisualComment = (props) => {
   const {
     id, src, comment, offsetX,

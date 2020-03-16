@@ -7,6 +7,7 @@ import store from '../redux/store';
 import theme from '../global/theme';
 import Header from '../components/header/Header';
 import Layout from '../components/layout/Layout';
+import Stream from '../pages/stream'
 
 const Home = () => (
   <Provider store={store}>
@@ -31,7 +32,9 @@ const Home = () => (
             href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap"
           />
         </Head>
-        <Layout/>
+        <Layout>
+          <Stream />
+        </Layout>
       </div>
     </ThemeProvider>
   </Provider>

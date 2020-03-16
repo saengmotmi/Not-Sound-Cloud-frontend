@@ -13,6 +13,8 @@ const Layout = ({ children }) => (
 
 const CenterContainer = styled.div`
 ${flexCenter};
+
+flex-direction: column;
 `;
 
 // Layout.propTypes = {
