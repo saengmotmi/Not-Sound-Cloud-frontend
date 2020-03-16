@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "name": "Home",
+      "url": "/"
+    },
+    { "id": 2, "name": "Stream", "url": "/" },
+    { "id": 3, "name": "Library", "url": "/" }
+  ]
+}

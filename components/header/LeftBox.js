@@ -1,0 +1,103 @@
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import styled from 'styled-components';
+// import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
+import theme, * as css from '../../global/theme';
+import { changeNav } from '../redux/header/headerActions';
+import { CHANGE_NAV } from '../redux/header/headerTypes';
+
+const LeftBox = ({ selectNav, changeNav }) => {
+  // state
+
+  const [navList, setNavList] = useState([]); // 네브 목록 목데이터 저장
+  // mock data fetch
+  const fetchData = async () => {
+    const response = await fetch("http://localhost:3000/data/nav.json");
+    const result = await response.json();
+    return setNavList(result.data);
+  };
+
+  // componentDidMount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return (
+    <LeftWrap>
+      <Ul>
+        <Link href="/">
+          <LogoBox
+            orange={theme.yellowOrange}
+            deepOrange={theme.deepOrange}
+            onClick={() => changeNav(0)}>
+            <Logo />
+          </LogoBox>
+        </Link>
+        {navList.map((li,idx) => (
+          <Link href={li.url} key={`${li.id}-navlist`}>
+            <Li on= {li.id === selectNav}
+              onClick={(e) => {
+                changeNav(li.id)
+              }}>
+              {li.name}
+            </Li>
+          </Link>
+        ))}
+      </Ul>
+    </LeftWrap>
+  );
+};
+
+
+// styled-components
+const LeftWrap = styled.div`
+display:flex;
+justify-content:flex-start;
+`;
+
+const LogoBox = styled.div`
+${css.flexCenter};
+cursor:pointer;
+background-image : linear-gradient(#ff6e00,#fc361d);
+width: 69px;
+height : 46px;
+border:none;
+`;
+const Logo = styled.div`
+${css.cloudLogo};
+background-size: 48px;
+background-position: 13px 11px;
+width:100%;
+height :100%;
+`;
+
+const Ul = styled.ul`
+display:flex;
+`;
+
+const Li = styled.li`
+${css.flexCenter}
+font-family:${theme.font};
+color: ${(props) => (props.orange ? null : theme.gray)};
+background-color : ${(props) => (props.on && theme.black)};
+font-size:13px;
+text-align:center;
+padding: 7px 0 10px 0;
+width: 104px;
+border-right: 1px solid ${theme.black};
+max-width : 100%;
+&:hover {
+cursor:pointer;
+color: ${(props) => (props.orange ? null : theme.lGray)};
+color: ${(props) => (props.on && theme.gray)};
+}
+`;
+
+
+const mapStateToProps = (state) => ({
+  selectNav: state.selectNav
+});
+
+
+export default connect(mapStateToProps, { changeNav })(LeftBox);
