@@ -1,0 +1,2 @@
+export const CHANGE_NAV = 'CHANGE_NAV';
+export const SEARCH_INPUT_VAL = "SEARCH_INPUT_VAL";

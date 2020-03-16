@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import reset from 'styled-reset';
 import { Provider } from 'react-redux';
-import store from '../components/redux/store';
+import store from '../redux/store';
 import theme from '../global/theme';
 import Header from '../components/header/Header';
 import Layout from '../components/layout/Layout';
@@ -28,9 +28,7 @@ const Home = () => (
             href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap"
           />
         </Head>
-        <Layout>
-          <Header />
-        </Layout>
+        <Layout/>
       </div>
     </ThemeProvider>
   </Provider>
