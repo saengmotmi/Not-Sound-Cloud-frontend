@@ -10,7 +10,15 @@
     "browser": true, // 브라우저 사용
     "node": true // 브라우저도 노드 사용함
   },
-  "extends": ["airbnb"],
+  "eslintConfig": {
+    "extends": [
+      "airbnb",
+      "react-app",
+      "plugin:prettier/recommended",
+      "eslint:recommended",
+      "plugin:react/recommended"
+    ]
+  },
   "plugins": ["import", "react", "react-hooks"],
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

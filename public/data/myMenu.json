@@ -1,0 +1,12 @@
+{
+  "data": [
+    { "id": 0, "icon": "faUser", "name": "Profile", "url": "/" },
+    { "id": 1, "icon": "faHeart", "name": "Likes", "url": "/" },
+    { "id": 2, "icon": "faPlay", "name": "Playlists", "url": "/" },
+    { "id": 3, "icon": "faBullseye", "name": "Stations", "url": "/" },
+    { "id": 4, "icon": "faUserFriends", "name": "Following", "url": "/" },
+    { "id": 5, "icon": "faUsers", "name": "Who to fallow", "url": "/" },
+    { "id": 6, "icon": "faStar", "name": "Try Pro", "url": "/" },
+    { "id": 7, "icon": "faBars", "name": "Track", "url": "/" }
+  ]
+}

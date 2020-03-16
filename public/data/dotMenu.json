@@ -1,0 +1,19 @@
+{
+  "data": [
+    { "id": 0, "name": "About us", "url": "/" },
+    { "id": 1, "name": "Legal", "url": "/" },
+    { "id": 2, "name": "Copyright", "url": "/" },
+    { "id": 3, "name": "Mobile apps", "url": "/" },
+    { "id": 4, "name": "Palse app for Creators", "url": "/" },
+    { "id": 5, "name": "SoundCloud Premier monetization", "url": "/" },
+    { "id": 6, "name": "For Creators", "url": "/" },
+    { "id": 7, "name": "Blog", "url": "/" },
+    { "id": 8, "name": "Jobs", "url": "/" },
+    { "id": 9, "name": "Developers", "url": "/" },
+    { "id": 10, "name": "Support", "url": "/" },
+    { "id": 11, "name": "Keyboard shortcuts", "url": "/" },
+    { "id": 12, "name": "Subscription", "url": "/" },
+    { "id": 13, "name": "Settings", "url": "/" },
+    { "id": 14, "name": "Sign out", "url": "/" }
+  ]
+}

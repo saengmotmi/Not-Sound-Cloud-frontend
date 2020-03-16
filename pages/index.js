@@ -1,39 +1,44 @@
+import React from 'react';
 import Head from 'next/head';
-import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import reset from 'styled-reset';
+import { Provider } from 'react-redux';
+import store from '../components/redux/store';
 import theme from '../global/theme';
-
-const GlobalStyle = createGlobalStyle`
-  ${reset}
-  @import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700,900|Roboto:100,300,400,500,700,900&display=swap&subset=korean');
-`;
+import Header from '../components/header/Header';
+import Layout from '../components/layout/Layout';
 
 const Home = () => (
-  <>
+  <Provider store={store}>
     <GlobalStyle />
     <ThemeProvider theme={theme}>
-
       <div className="container">
         <Head>
           <title>SoundCloud</title>
-          <link rel="icon" href="https://a-v2.sndcdn.com/assets/images/sc-icons/favicon-2cadd14bdb.ico" />
+          <link
+            rel="icon"
+            href="https://a-v2.sndcdn.com/assets/images/sc-icons/favicon-2cadd14bdb.ico"
+          />
+          <link
+            rel="stylecheet"
+            href="https://fonts.cdnfonts.com/css/interstate-2"
+          />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap"
+          />
         </Head>
-
-        <main>
-          <Text>
-            헬로우~
-          </Text>
-        </main>
-
+        <Layout>
+          <Header />
+        </Layout>
       </div>
-
     </ThemeProvider>
-  </>
+  </Provider>
 );
 
-const Text = styled.div`
-font-family : 'Roboto';
-color: ${theme.orange};
-`;
+const GlobalStyle = createGlobalStyle`
+    font-family: ${theme.fontGlobal};
+    ${reset};
+  `;
 
 export default Home;
