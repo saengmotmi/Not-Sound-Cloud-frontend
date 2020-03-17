@@ -10,7 +10,7 @@ import UserAvartar from '../userAvatar/UserAvatar';
 const Notifications = ({ data }) => (
   <>
     <Ul>
-      {data &&
+      {data.length !== 0 ?  (
         data.map((li) => (
           <Link href="/">
             <Li>
@@ -25,21 +25,35 @@ const Notifications = ({ data }) => (
                 </FirstLine>
                 <SecondLine>
                   <div>
-                    <span>
-                      {li.message}
-                      </span>
-                      </div>
-                      </SecondLine>
+                    <span>{li.message}</span>
+                  </div>
+                </SecondLine>
               </PaddingWrap>
             </Li>
           </Link>
-        ))}
+        ))
+      ) : (
+        <LoadingBox>
+          <img
+            src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
+            alt="loading"
+          />
+        </LoadingBox>
+      )}
     </Ul>
     <Button>View all notifications</Button>
   </>
 );
 
-
+const LoadingBox = styled.div`
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  img {
+    width: 20px;
+  }
+`;
 const FollowBtn = styled.div`
   cursor: pointer;
   display: flex;
@@ -62,6 +76,7 @@ const StarIcon = styled.div`
 `;
 
 const UserName = styled.span`
+line-height:1.5em;
   font-size: 14px;
   padding-right: 5px;
   text-overflow: ellipsis;

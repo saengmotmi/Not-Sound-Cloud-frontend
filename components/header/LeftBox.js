@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import styled from 'styled-components';
 // import { useSelector, useDispatch } from 'react-redux';
@@ -10,6 +10,7 @@ const LeftBox = ({ selectNav, changeNav }) => {
   // state
 
   const [navList, setNavList] = useState([]); // 네브 목록 목데이터 저장
+  const refSelecNav = useRef(); // 레퍼런스 사용.
   // mock data fetch
   const fetchData = async () => {
     const response = await fetch("http://localhost:3000/data/nav.json");
@@ -29,7 +30,13 @@ const LeftBox = ({ selectNav, changeNav }) => {
       return "false"
     }
   }
-  
+  const checkCurrentNav = (num) => {
+    if (selectNav === num) {
+      return 0;
+    } else {
+      return num;
+    }
+  };
   return (
     <LeftWrap>
       <Ul>
@@ -37,7 +44,7 @@ const LeftBox = ({ selectNav, changeNav }) => {
           <LogoBox
             orange={theme.yellowOrange}
             deepOrange={theme.deepOrange}
-            onClick={() => changeNav(0)}>
+            onClick={() => changeNav(checkCurrentNav(0))}>
             <Logo />
           </LogoBox>
         </Link>

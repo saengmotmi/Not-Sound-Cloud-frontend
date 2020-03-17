@@ -11,44 +11,55 @@ import Notifications from '../dropDown/Notifications';
 import Messages from '../dropDown/Messages';
 import SearchDropdown from "../dropDown/SearchDropdown";
 import { CHANGE_NAV } from '../../redux/header/headerTypes';
-import { changeNav } from '../../redux/header/headerActions';
-
+import {
+  checkNoti,
+  changeNav,
+  checkMessage,
+  saveMessageData,
+  saveNotiData
+} from "../../redux/header/headerActions";
+// import { TOKEN } from "../../global/api";
+import fetch from "isomorphic-unfetch";
 
 const Header = (props) => {
   // state
   const [myMenuData, setMyMenuData] = useState([]);
   const [dotMenuData, setDotMenuData] = useState([]);
-  const [NotiData, setNotiData] = useState([]);
+  // const [NotiData, setNotiData] = useState([]);
   const [msgData, setMsgData] = useState([]);
 
+  // 메뉴 패치
   const fetchMyMenu = async () => {
     const response = await fetch('http://localhost:3000/data/myMenu.json');
     const result = await response.json();
     return setMyMenuData(result.data);
   };
 
+  // 닷메뉴 패치
   const fetchDotMenu = async () => {
     const response = await fetch('http://localhost:3000/data/dotMenu.json');
     const result = await response.json();
     return setDotMenuData(result.data);
   };
+  
+  // 메세지 내역 패치
   const fetchMessages = async () => {
     const response = await fetch('http://localhost:3000/data/Notice.json');
     const result = await response.json();
     return setMsgData(result.data);
   };
-  const fetchNotifications = async () => {
-    const response = await fetch('http://localhost:3000/data/Notice.json');
-    const result = await response.json();
-    return setNotiData(result.data);
-  };
+
+
 
   useEffect(() => {
     fetchDotMenu();
     fetchMyMenu();
-    fetchNotifications();
     fetchMessages();
-  }, []);
+    // fetchNotifications();
+    // fetchRedLight();
+  }, []);    
+
+  // useEffect(()=>{checkOutsideClick},[selectNav]);
   const { selectNav, inputVal } = props;
   return (
     <HeaderContainer>
@@ -67,7 +78,7 @@ const Header = (props) => {
         )}
         {selectNav === 6 && (
           <WideWrap>
-            <Notifications data={NotiData} />
+            <Notifications />
           </WideWrap>
         )}
         {selectNav === 7 && (
@@ -91,6 +102,8 @@ const Header = (props) => {
 };
 
 const HeaderContainer = styled.div`
+position:fixed;
+top:0;
 width:100%;
 ${flexCenter};
 flex-direction:column;
@@ -140,10 +153,14 @@ position:absolute;
 const mapStateToProps = (state) => ({
   selectNav: state.selectNav,
   inputVal: state.inputVal,
+  noriData: state.noriData
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  changeNav: () => dispatch(changeNav()),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, {
+  checkNoti,
+  changeNav,
+  checkMessage,
+  saveMessageData,
+  saveNotiData
+})(Header);
