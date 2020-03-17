@@ -1,7 +1,8 @@
-import { CHANGE_NAV } from './headerTypes';
+import { CHANGE_NAV, SEARCH_INPUT_VAL } from "./headerTypes";
 
 const initState = {
-  selectNav: {}
+  selectNav: {},
+  inputVal : ''
 };
 
 const headerReduder = (state = initState, action) => {
@@ -11,6 +12,13 @@ const headerReduder = (state = initState, action) => {
         ...state,
         selectNav: action.payload.selectNav
       };
+    case SEARCH_INPUT_VAL :
+      return {
+        ...state,
+        inputVal: action.payload.inputVal,
+        inputlength: action.payload.length
+      };
+
     default:
       return state;
   }

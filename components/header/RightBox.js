@@ -8,12 +8,19 @@ import {
 import theme, * as css from '../../global/theme';
 import UserAvatar from '../userAvatar/UserAvatar';
 import { connect } from "react-redux";
-import { changeNav } from "../redux/header/headerActions";
-import { CHANGE_NAV } from "../redux/header/headerTypes";
+import { changeNav } from "../../redux/header/headerActions";
+import { CHANGE_NAV } from "../../redux/header/headerTypes";
 
 const RightBox = props => {
   // 프롭스 디스트럭처
   const { changeNav, selectNav } = props;
+    const checkId = (id) => {
+      if (id === selectNav) {
+        return "true";
+      } else {
+        return "false";
+      }
+    };
   return (
     <>
       <RightWrap>
@@ -21,7 +28,7 @@ const RightBox = props => {
           <Link href="/">
             <Li
               nav
-              on={4 === selectNav}
+              on={checkId(4)}
               style={{}}
               onClick={() => {
                 changeNav(4);
@@ -30,7 +37,7 @@ const RightBox = props => {
             </Li>
           </Link>
           <Li
-            on={5 === selectNav}
+            on={checkId(5)}
             onClick={() => {
               changeNav(5);
             }}>
@@ -48,7 +55,7 @@ const RightBox = props => {
             </MarginWrap>
           </Li>
           <Li
-            on={6 === selectNav}
+            on={checkId(6)}
             onClick={(e) => {
               changeNav(6);
               // changeNav("messages-drop-down");
@@ -63,7 +70,7 @@ const RightBox = props => {
             </MarginWrap>
           </Li>
           <Li
-            on={7 === selectNav}
+            on={checkId(7)}
             onClick={(e) => {
               changeNav(7);
             }}>
@@ -77,7 +84,7 @@ const RightBox = props => {
             </MarginWrap>
           </Li>
           <Li
-            on={8 === selectNav}
+            on={checkId(8)}
             onClick={(e) => {
               changeNav(8);
             }}>
@@ -120,7 +127,7 @@ const Li = styled.li`
 ${css.flexCenter}
 font-family:${theme.font};
 color: ${(props) => (props.orange ? null : theme.gray)};
-background-color : ${(props) => props.on && theme.black};
+background-color : ${(props) => props.on === 'true' && theme.black};
 font-size:13px;
 text-align:center;
 line-height:1.2em;
@@ -144,4 +151,4 @@ const mapStateToProps = (state) => {
 
 
 // 디스페치를 불러올때 굳이 mapDispatchToProps로 가져오지말고 connect할때 바로 연결하자.
-export default connect(mapStateToProps, { changeNav })(RightBox);
+export default connect(mapStateToProps, { changeNav  })(RightBox);

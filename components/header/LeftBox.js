@@ -4,8 +4,7 @@ import styled from 'styled-components';
 // import { useSelector, useDispatch } from 'react-redux';
 import { connect } from 'react-redux';
 import theme, * as css from '../../global/theme';
-import { changeNav } from '../redux/header/headerActions';
-import { CHANGE_NAV } from '../redux/header/headerTypes';
+import { changeNav } from '../../redux/header/headerActions';
 
 const LeftBox = ({ selectNav, changeNav }) => {
   // state
@@ -23,6 +22,14 @@ const LeftBox = ({ selectNav, changeNav }) => {
     fetchData();
   }, []);
 
+  const checkId=(id)=>{
+    if (id===selectNav){
+      return "true"
+    } else {
+      return "false"
+    }
+  }
+  
   return (
     <LeftWrap>
       <Ul>
@@ -34,11 +41,12 @@ const LeftBox = ({ selectNav, changeNav }) => {
             <Logo />
           </LogoBox>
         </Link>
-        {navList.map((li,idx) => (
+        {navList.map((li) => (
           <Link href={li.url} key={`${li.id}-navlist`}>
-            <Li on= {li.id === selectNav}
+            <Li
+              on={checkId(li.id)}
               onClick={(e) => {
-                changeNav(li.id)
+                changeNav(li.id);
               }}>
               {li.name}
             </Li>
@@ -80,7 +88,7 @@ const Li = styled.li`
 ${css.flexCenter}
 font-family:${theme.font};
 color: ${(props) => (props.orange ? null : theme.gray)};
-background-color : ${(props) => (props.on && theme.black)};
+background-color : ${(props) => props.on === "true" && theme.black};
 font-size:13px;
 text-align:center;
 padding: 7px 0 10px 0;
@@ -90,7 +98,7 @@ max-width : 100%;
 &:hover {
 cursor:pointer;
 color: ${(props) => (props.orange ? null : theme.lGray)};
-color: ${(props) => (props.on && theme.gray)};
+color: ${(props) => props.on === "true" && theme.gray};
 }
 `;
 
