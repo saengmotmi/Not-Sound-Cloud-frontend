@@ -9,7 +9,7 @@ const Visualizer = () => {
   const canvasRefTop = useRef(null);
   const canvasRefBot = useRef(null);
 
-  const [canvasWidth, setCanvasWidth] = useState(640);
+  const [canvasWidth, setCanvasWidth] = useState(0);
   const [count, setCount] = useState(0);
   const [inputID, setInputID] = useState('');
   const [inputComment, setInputComment] = useState('');
@@ -56,8 +56,8 @@ const Visualizer = () => {
     let i = 0;
     let j = '';
 
-    ctxTop.fillStyle = theme.orange;
-    ctxBot.fillStyle = 'black';
+    ctxTop.fillStyle = "white";
+    ctxBot.fillStyle = "white";
     i = 0;
     j = '';
 
@@ -92,7 +92,6 @@ const Visualizer = () => {
   const onCanvasClick = (e, pos) => {
     if (e.nativeEvent.offsetX < 640) {
       if (pos === 'top') {
-        // console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY); // react는 e.navtive.offsetX, Y로
         console.log(`${Math.ceil(e.nativeEvent.offsetX / 640 * 100)}%`);
 
         setCanvasWidth(e.nativeEvent.offsetX);
@@ -105,43 +104,44 @@ const Visualizer = () => {
 
   return (
     <>
-      <div>
-        <WaveWrapper>
-          <Canvas posId="wave-top" onMouseMove={onCanvasMove} onClick={(event) => onCanvasClick(event, 'top')} width="640" height="80" ref={canvasRefTop} />
-          <Canvas posId="wave-bot" onMouseMove={onCanvasMove} onClick={(event) => onCanvasClick(event, 'bot')} width="640" height="50" ref={canvasRefBot} />
-        </WaveWrapper>
-        <OverDiv isPlay={count} mouseOn="y" widthProps={`${canvasWidth}`} />
-        <OverDiv mouseOn="n" widthProps={`${canvasWidth}`} />
+      <div style={{ position: "relative", height: "200px" }}>
+        <Canvas posId="wave-top" width="640" height="80" ref={canvasRefTop} />
+        <Canvas posId="wave-bot" width="640" height="80" ref={canvasRefBot} />
+        <EventDiv
+          posId="wave-top"
+          onMouseMove={onCanvasMove}
+          onClick={event => onCanvasClick(event, "top")}
+        />
+        <EventDiv
+          posId="wave-bot"
+          onMouseMove={onCanvasMove}
+          onClick={event => onCanvasClick(event, "bot")}
+        />
+        <UnderDiv isPlay={count} mouseOn="y" widthProps={`${canvasWidth}`} />
+        <UnderDiv mouseOn="n" widthProps={`${canvasWidth}`} />
         {commentArr}
-
       </div>
-      <input value={inputID} onChange={(event) => typeComment(event, 'id')} type="text" />
-      <input value={inputComment} onChange={(event) => typeComment(event, 'comment')} type="text" />
-      <button onClick={addComment} type="button">send</button>
+      {/* <input onChange={(event) => typeComment(event, 'id')} type="text" />
+      <input onChange={(event) => typeComment(event, 'comment')} type="text" />
+      <button onClick={addComment} type="button">send</button> */}
     </>
   );
 };
 
 export default Visualizer;
 
-const WaveWrapper = styled.div`
-  position: relative;
-  /* width: 640px; */
-  height: 130px;
-  overflow: hidden;
-
-  opacity: 0.7;
-
-&:hover {
-  opacity:1;
-  transition: opacity 0.5s;
-}
+const EventDiv = styled.div`
+  z-index: 200;
+  position: absolute;
+  width: 640px;
+  height: 80px;
+  top: ${props => (props.posId === "wave-top" ? 0 : 80)}px;
 `;
 
-const OverDiv = styled.div`
+const UnderDiv = styled.div`
   background-color: salmon;
-  opacity: ${(props) => (props.mouseOn === 'y' ? 0.3 : 0.2)};
-  z-index: ${(props) => (props.mouseOn === 'y' ? -1 : -2)};
+  opacity: ${(props) => (props.mouseOn === 'y' ? 0.3 : 0.3)};
+  z-index: ${(props) => (props.mouseOn === 'y' ? 5 : 6)};
   position: absolute;
   top: 0;
   left: 0;
@@ -158,6 +158,6 @@ const OverDiv = styled.div`
 const Canvas = styled.canvas`
   position: absolute;
   overflow: hidden;
+  z-index: 10;
   top: ${(props) => (props.posId === 'wave-top' ? 0 : 80)}px;
-
 `;
