@@ -19,9 +19,7 @@ const mockData = {
 };
 
 const datatest = [1,2,3]
-
-const vctest = datatest.map(param => (<div><VisualizerComp key={param} play={param} {...mockData}></VisualizerComp></div> ));
-
+const vctest = datatest.map((param, idx) => (<div key={idx}><VisualizerComp play={param} {...mockData}></VisualizerComp></div> ));
 
 const Stream = () => {
   const a = 0;
