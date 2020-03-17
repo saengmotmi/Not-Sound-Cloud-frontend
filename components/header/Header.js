@@ -9,8 +9,9 @@ import MyMenu from '../dropDown/MyMenu';
 import DotMenu from '../dropDown/DotMenu';
 import Notifications from '../dropDown/Notifications';
 import Messages from '../dropDown/Messages';
-import { CHANGE_NAV } from '../redux/header/headerTypes';
-import { changeNav } from '../redux/header/headerActions';
+import SearchDropdown from "../dropDown/SearchDropdown";
+import { CHANGE_NAV } from '../../redux/header/headerTypes';
+import { changeNav } from '../../redux/header/headerActions';
 
 
 const Header = (props) => {
@@ -48,7 +49,7 @@ const Header = (props) => {
     fetchNotifications();
     fetchMessages();
   }, []);
-  const { selectNav } = props;
+  const { selectNav, inputVal } = props;
   return (
     <HeaderContainer>
       <HeaderBlackBar>
@@ -66,18 +67,23 @@ const Header = (props) => {
         )}
         {selectNav === 6 && (
           <WideWrap>
-            <Messages data={msgData} />
+            <Notifications data={NotiData} />
           </WideWrap>
         )}
         {selectNav === 7 && (
           <WideWrap>
-            <Notifications data={NotiData} />
+            <Messages data={msgData} />
           </WideWrap>
         )}
         {selectNav === 8 && (
           <DotMenuWrap>
             <DotMenu data={dotMenuData} />
           </DotMenuWrap>
+        )}
+        {selectNav === 9 && (
+          <SearchDropdownWrap>
+            <SearchDropdown />
+          </SearchDropdownWrap>
         )}
       </DropdownContainer>
     </HeaderContainer>
@@ -107,6 +113,7 @@ justify-content:flex-end;
 width:1240px;
 `;
 
+
 const MyMenuWrap = styled.div`
 position: relative;
 right: 148px;
@@ -118,6 +125,12 @@ width:170px;
 position:relative;
 `;
 
+const SearchDropdownWrap = styled.div`
+  position: relative;
+  padding-right: 50%;
+  left:278px;
+`;
+
 const WideWrap = styled.div`
 width:360px;
 position:absolute;
@@ -125,7 +138,8 @@ position:absolute;
 
 
 const mapStateToProps = (state) => ({
-  selectNav: state.selectNav
+  selectNav: state.selectNav,
+  inputVal: state.inputVal,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,13 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 import theme, * as css from '../../global/theme';
+import { changeInputVal, changeNav } from "../../redux/header/headerActions";
+import { connect } from "react-redux";
 
-const SearchInput = () => (
-  <SearchInputContainer>
-    <Label htmlFor="search-input" />
-    <Input id="search-input" placeholder="search!" />
-  </SearchInputContainer>
-);
+const SearchInput = ({ inputVal, changeInputVal, selectNav, changeNav }) => (
+    <SearchInputContainer>
+      <Label htmlFor="search-input" />
+      <Input
+        placeholder="search!"
+        onFocus={() => changeNav(9)}
+        onChange={(e) => {
+          let value = e.target.value;
+          changeInputVal(value);
+        }}
+        value={inputVal}
+        key={"search-input"}
+      />
+    </SearchInputContainer>
+)
 
 const SearchInputContainer = styled.div`
 ${css.flexCenter}
@@ -16,8 +27,8 @@ position:relative;
 `;
 const Label = styled.label`
 position:absolute;
-top:28%;
-right:15px;
+top:35%;
+right:20px;
 ${css.searchIcon}
 color:${theme.dGray};
 
@@ -46,4 +57,14 @@ transition: .2s background-color ease-in-out;
 }
 `;
 
-export default SearchInput;
+const mapStateToProps = (state)=>{
+  return {
+    selectNav: state.selectNav,
+    inputVal: state.inputVal
+  };}
+
+
+
+export default connect(mapStateToProps, { changeNav, changeInputVal })(
+  SearchInput
+);
