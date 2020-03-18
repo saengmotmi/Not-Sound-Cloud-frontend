@@ -14,7 +14,7 @@ const UserAvartar = ({ size, url, rect }) => {
 };
 
 const UserAvartarWrap = styled.div`
-width :${(props) => props.size || '50px'};
+min-width :${(props) => props.size || '50px'};
 height :${(props) => props.size || '50px'};
 border-radius: ${(props)=> props.rect ? '0%' : '50%' };
 overflow:hidden;

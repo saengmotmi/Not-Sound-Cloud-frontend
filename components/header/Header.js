@@ -8,7 +8,7 @@ import RightBox from './RightBox';
 import MyMenu from '../dropDown/MyMenu';
 import DotMenu from '../dropDown/DotMenu';
 import Notifications from '../dropDown/Notifications';
-import Messages from '../dropDown/Messages';
+import Messages from '../dropDown/MessagePop';
 import SearchDropdown from "../dropDown/SearchDropdown";
 import { CHANGE_NAV } from '../../redux/header/headerTypes';
 import {
