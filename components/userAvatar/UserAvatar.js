@@ -22,9 +22,7 @@ overflow:hidden;
 
 const UserPic = styled.div`
   ${css.userPic};
-  background-image: url(${(props) =>
-    props.url ||
-    "https://i1.sndcdn.com/artworks-000242629294-7fotrp-t120x120.jpg"});
+  background-image: url(${(props) => props.url || "https://i1.sndcdn.com/artworks-000242629294-7fotrp-t120x120.jpg"});
   width: 100%;
   height: 100%;
 `;

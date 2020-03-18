@@ -4,53 +4,143 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as icon from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { connect } from "react-redux";
 import theme, * as css from '../../global/theme';
 import UserAvartar from '../userAvatar/UserAvatar';
+import {
+  USER_NOTIFICATION,
+  TOKEN,
+  USER_STATUS,
+  FAMOUS,
+  USER_FOLLOW
+} from "../../global/api";
+import {
+  saveNotiData
+} from "../../redux/header/headerActions";
+import fetch from "isomorphic-unfetch";
+
+const Notifications = (props) => {
+  const { notiData } = props;
+  const timer = (old) => {
+    // old = 2020-03-17T11:21:23.464Z
+    let year = old.slice(0, 4); // 2019
+    let month = old.slice(5, 7); // 05
+    let date = old.slice(8, 10); // 10
+    let hour = old.slice(11, 13); // 2
+    let min = old.slice(14, 16); // 18
+    let sec = old.slice(17, 19); // 90
+
+    let now = new Date();
+
+    let nowYear = now.getFullYear(); //2020
+    let nowMonth = now.getMonth() + 1; // 달 0~11달 //
+    let nowDate = now.getDate(); //17
+    let nowHours = now.getHours(); // 0~11시
+    let nowMin = now.getMinutes(); // 0~59분
+    let nowSec = now.getSeconds(); // 0~59초
+
+    if (nowYear - Number(year) >= 1) return nowYear - year + " years ago";
+    if (nowMonth - Number(month) >= 1) return nowMonth - month + " month ago";
+    if (nowDate + 1 - Number(date) >= 1) return nowHours - hour + " hours ago";
+    if (nowMin - Number(min) >= 1) return nowHours - hour + " hours ago";
+    if (nowSec - Number(sec) >= 1) return nowHours - hour + " hours ago";
+  };
 
 
-const Notifications = ({ data }) => (
-  <>
-    <Ul>
-      {data && data.map((li) => (
-        <Link href="/">
-          <Li>
-            <UserAvartar size="42px" />
-            <PaddingWrap left="10px">
-              <FirstLine>
-                <div>
-                  <UserName>{li.userId}</UserName>
-                  {li.star && <StarIcon />}
-                  <span>is following you</span>
-                </div>
-                <div>{li.time}</div>
-              </FirstLine>
-              <SecondLine>
-                <div>
-                  <FontAwesomeIcon icon={icon.faUser} />
-                  <span>
-                    {li.userFallowers}
-                  </span>
-                  <FontAwesomeIcon icon={icon.faAlignCenter} style={{ transform: 'rotate(270deg)' }} />
-                  <span>
-                    {li.userTrack}
-                  </span>
-                </div>
-                <FollowBtn>
-                  <span>
-                    <FontAwesomeIcon icon={icon.faUserPlus} style={{ paddingRight: '6px' }} />
-                    follow back
-                  </span>
-                </FollowBtn>
-              </SecondLine>
-            </PaddingWrap>
-          </Li>
-        </Link>
-      ))}
-    </Ul>
-    <Button>View all notifications</Button>
-  </>
-);
 
+// !todo 언팔로우 패치 연결하기..body에는 username 보내야 함!
+// const fetchFollowState = async () => {
+//   const response = await fetch(USER_FOLLOW, {
+//     method : 'POST',
+//     body : JSON.stringify({
+//       to_follow_id : 117 //!여기 숫자 대신 변수로 변경하기!!
+//     })
+//   });
+//   const result = await response.json();
+//   if (await result) { 
+  
+//   }
+// }
+
+  return (
+    <>
+      <Ul>
+        {notiData !== "EMPTY_UPDATES" ? (
+          notiData.map((li) => {
+            // console.log(li, "리스트출력!!!");
+            return (
+              <Link
+                href="/"
+                // key={
+                // !여기에 유저네임으로 키 넣기!}
+              >
+                <Li>
+                  <UserAvartar size="42px" url={li["follower_image"]} />
+                  <PaddingWrap left="10px">
+                    <FirstLine>
+                      <div>
+                        <UserName>{li["follower_name"]}</UserName>
+                        {li["follower_follower_count"] > FAMOUS && <StarIcon />}
+                        <span>is following you</span>
+                      </div>
+                      <div>{timer(li["follow_at"])}</div>
+                    </FirstLine>
+                    <SecondLine>
+                      <div>
+                        <FontAwesomeIcon icon={icon.faUser} />
+                        <span>{li["follower_follower_count"]}</span>
+                        <FontAwesomeIcon
+                          icon={icon.faAlignCenter}
+                          style={{ transform: "rotate(270deg)" }}
+                        />
+                        <span>{li["follower_song_count"]}</span>
+                      </div>
+                      <FollowBtn
+                      // onClick={                      }
+                      >
+                        <span>
+                          <FontAwesomeIcon
+                            icon={icon.faUserPlus}
+                            style={{ paddingRight: "6px" }}
+                          />
+                          {li.mutual_follow ? "Following" : "follow back"}
+                        </span>
+                      </FollowBtn>
+                    </SecondLine>
+                  </PaddingWrap>
+                </Li>
+              </Link>
+            );
+          })
+        ) : (
+          <LoadingBox>
+            <p>empty updates!</p>
+            {/* <img
+              src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
+              alt="loading"
+            /> */}
+          </LoadingBox>
+        )}
+      </Ul>
+      <Button>View all notifications</Button>
+    </>
+  );
+};
+
+const LoadingBox = styled.div`
+padding:20px;
+display:flex;
+flex-direction: column;
+justify-content:center;
+align-content:center;
+color:${theme.gray};
+p {
+  /* padding-bottom:20px; */
+  text-align:center;
+}
+img {
+  width:20px;
+}`;
 const FollowBtn = styled.div`
     cursor: pointer;
     display:flex;
@@ -61,7 +151,7 @@ const FollowBtn = styled.div`
     border-radius:3px;
     background-color:${theme.black};
     border: 1px solid ${theme.chacoal};
-    max-width:100px;
+    max-width:130px;
     &:hover {
     border: 1px solid ${theme.dGray};
     }
@@ -78,12 +168,13 @@ margin-right:5px;
 `;
 
 const UserName = styled.span`
-font-size: 14px;
-padding-right:5px;
-text-overflow: ellipsis;
-white-space: nowrap;
-overflow:hidden;
-max-width:100px;
+  line-height: 1.5em;
+  font-size: 14px;
+  padding-right: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100px;
 `;
 const FirstLine = styled.p`
 display:flex;
@@ -173,5 +264,12 @@ const Button = styled.button`
   }
 `;
 
-export default Notifications;
+
+const mapStateToProps = (state) => ({
+  selectNav: state.selectNav,
+  inputVal: state.inputVal,
+  notiData: state.notiData
+});
+
+export default connect(mapStateToProps,{saveNotiData})(Notifications);
 

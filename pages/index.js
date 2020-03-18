@@ -2,14 +2,17 @@ import React from 'react';
 import Head from 'next/head';
 import styled, { createGlobalStyle, ThemeProvider, css } from 'styled-components';
 import reset from 'styled-reset';
-import { Provider } from 'react-redux';
-import store from '../redux/store';
+import { Provider, connect } from 'react-redux';
+import store from '../redux/store'
 import theme from '../global/theme';
-import Header from '../components/header/Header';
 import Layout from '../components/layout/Layout';
 import Stream from '../pages/stream'
+import { checkNoti, checkMessage } from "../redux/header/headerActions";
 
-const Home = () => (
+
+
+const Home = () => {
+return (
   <Provider store={store}>
     <GlobalStyle />
     <ThemeProvider theme={theme}>
@@ -39,10 +42,15 @@ const Home = () => (
     </ThemeProvider>
   </Provider>
 );
+}
+
 
 const GlobalStyle = createGlobalStyle`
-    font-family: ${theme.fontGlobal};
-    ${reset};
-  `;
+  font-family: ${theme.fontGlobal};
+  ${reset};
+`;
+
+
+
 
 export default Home;
