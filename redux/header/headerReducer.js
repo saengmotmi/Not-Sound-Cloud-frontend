@@ -4,7 +4,8 @@ import {
   MESSAGE_CHECKED,
   NOTI_CHECKED,
   MESSAGE_DATA,
-  NOTI_DATA
+  NOTI_DATA,
+  USER_DATA
 } from "./headerTypes";
 
 const initState = {
@@ -13,7 +14,14 @@ const initState = {
   messageChacked: true,
   notiChacked: true,
   messageData: [],
-  notiData: []
+  notiData: [],
+  // userData:{}
+  userData: {
+    user_id: 117,
+    user_name: "heechul",
+    user_image:
+      "https://image.bugsm.co.kr/album/images/50/203046/20304638.jpg?version=20200208002354.0"
+  }
 };
 
 const headerReduder = (state = initState, action) => {
@@ -47,10 +55,16 @@ const headerReduder = (state = initState, action) => {
       };
 
     case NOTI_DATA:
-        return {
-          ...state,
-          notiData: action.payload.notiData
-        };
+      return {
+        ...state,
+        notiData: action.payload.notiData
+      };
+
+    case USER_DATA:
+      return {
+        ...state,
+        userData: action.payload.userData
+      };
 
     default:
       return state;

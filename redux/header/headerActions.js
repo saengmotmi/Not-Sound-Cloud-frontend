@@ -4,7 +4,8 @@ import {
   MESSAGE_CHECKED,
   NOTI_CHECKED,
   MESSAGE_DATA,
-  NOTI_DATA
+  NOTI_DATA,
+  USER_DATA
 } from "./headerTypes";
 
 // 선택한 네브 변경
@@ -42,7 +43,7 @@ export const checkNoti = (val) => {
 // 새로운 메세지 데이터 저장
 export const saveMessageData = (data) => {
   return {
-    type: NOTI_CHECKED,
+    type: MESSAGE_DATA,
     payload: { messageData: data }
   };
 }
@@ -55,3 +56,9 @@ export const saveNotiData = (data) => {
   };
 };
 
+export const saveUserData = (data) => {
+  return {
+    type: USER_DATA,
+    payload: { userData: data }
+  };
+};

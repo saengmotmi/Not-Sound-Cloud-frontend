@@ -96,9 +96,9 @@ ${css.flexCenter}
 font-family:${theme.font};
 color: ${(props) => (props.orange ? null : theme.gray)};
 background-color : ${(props) => props.on === "true" && theme.black};
-font-size:13px;
+font-size:14px;
 text-align:center;
-padding: 7px 0 10px 0;
+padding: 10px 0;
 width: 104px;
 border-right: 1px solid ${theme.black};
 max-width : 100%;

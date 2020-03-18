@@ -35,6 +35,14 @@ export default class MyDocument extends Document {
         <Head>
           <style />
           <link
+            href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap"
+            rel="stylesheet"
+          />
+          <link
+            rel="icon"
+            href="https://a-v2.sndcdn.com/assets/images/sc-icons/favicon-2cadd14bdb.ico" />
+        
+          <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css"
           />

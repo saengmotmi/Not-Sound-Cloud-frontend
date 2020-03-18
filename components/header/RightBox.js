@@ -13,9 +13,17 @@ import {
   checkMessage,
   checkNoti,
   saveNotiData,
+  saveMessageData,
+  saveUserData,
 } from "../../redux/header/headerActions";
 // import { CHANGE_NAV } from "../../redux/header/headerTypes";
-import { TOKEN, USER_STATUS, USER_NOTIFICATION } from "../../global/api";
+import {
+  TOKEN,
+  USER_STATUS,
+  USER_NOTIFICATION,
+  USER_MESSAGE,
+  USER
+} from "../../global/api";
 
 
 
@@ -23,163 +31,195 @@ import { TOKEN, USER_STATUS, USER_NOTIFICATION } from "../../global/api";
 
 
 const RightBox = (props) => {
-                              // 프롭스 디스트럭처
-                              const {
-                                changeNav,
-                                selectNav,
-                                notiChacked,
-                                messageChacked,
-                                notiData,
-                                saveNotiData,
-                                checkMessage,
-                                checkNoti
-                              } = props;
-                              // const [massageChecked, setMassageChecked] = useState();
-                              // const [followChecked, setFollowChecked] = useState();
-                              const chackNavState = (e) => {
-                                // 클릭한 타겟의 id를 가져와 현재 네브 상태와 비교, 같으면 네브 끄기.
-                                if (parseInt(e.target.id) === selectNav) {
-                                  changeNav(0);
-                                } else {
-                                  changeNav(parseInt(e.target.id));
-                                }
-                              };
-                              const checkId = (id) => {
-                                if (id === selectNav) {
-                                  return "true";
-                                } else {
-                                  return "false";
-                                }
-                              };
-                              const checkCurrentNav = (num) => {
-                                if (selectNav === num) {
-                                  return 0;
-                                } else {
-                                  return num;
-                                }
-                              };
-                              //! 노티 데이터 펫치
-                              const fetchNotiDataState = async () => {
-                                const resporse = await fetch(USER_STATUS, {
-                                  method: "GET",
-                                  headers: {
-                                    Authorization: TOKEN
-                                  }
-                                });
-                                const result = await resporse.json();
-                                console.log(result.message);
-                                if ( result.message) {
-                                  return saveNotiData('EMPTY_UPDATES');
-                                } else {
-                                        return saveNotiData(result.data);
-                                      }
-                              };
-                              const fetchRedLight = async () => {
-                                const response = await fetch(
-                                  USER_NOTIFICATION,
-                                  {
-                                    method: "GET",
-                                    headers: {
-                                    Authorization: TOKEN
-                                    }
-                                  }
-                                );
-                                const result = await response.json();
-                                console.log(result.data);
-                                checkMessage(result.data["message_checked"]);
-                                checkNoti(result.data["follow_checked"]);
-                              };
-  const onClickNoti = ()=>{
-    fetchNotiDataState();
-    changeNav(checkCurrentNav(6));
+    // 프롭스 디스트럭처
+    const {
+      changeNav,
+      selectNav,
+      notiChacked,
+      messageChacked,
+      saveMessageData,
+      saveNotiData,
+      checkMessage,
+      checkNoti,
+      saveUserData,
+      userData
+    } = props;
+    // const [massageChecked, setMassageChecked] = useState();
+    // const [followChecked, setFollowChecked] = useState();
+    const chackNavState = (e) => {
+      // 클릭한 타겟의 id를 가져와 현재 네브 상태와 비교, 같으면 네브 끄기.
+      if (parseInt(e.target.id) === selectNav) {
+        changeNav(0);
+      } else {
+        changeNav(parseInt(e.target.id));
+      }
+    };
+    const checkId = (id) => {
+      if (id === selectNav) {
+        return "true";
+      } else {
+        return "false";
+      }
+    };
+    const checkCurrentNav = (num) => {
+      if (selectNav === num) {
+        return 0;
+      } else {
+        return num;
+      }
+    };
+    const fetchUser = async () => {
+          const response = await fetch(USER, {
+            method: "GET",
+            headers: {
+              Authorization: TOKEN
+            }
+          });
+          // console.log(response,'????');
+          const result = await response.json();
+          // console.log(result.data);
+          // console.log(result.data["user_name"]);
+          // console.log(result.data["user_image"]);
+          //! 여기 유저정포 스테이트에 저장하기로 변경
+          return saveUserData(result.data);
+    }
+    const fetchRedLight = async () => {
+      const response = await fetch(
+        USER_NOTIFICATION,
+        {
+          method: "GET",
+          headers: {
+            Authorization: TOKEN
+          }
+        }
+      );
+      const result = await response.json();
+      // console.log(result.data);
+      checkMessage(result.data["message_checked"]);
+      checkNoti(result.data["follow_checked"]);
+    };
+    
+    //! 노티 데이터 펫치
+    const fetchNotiDataState = async () => {
+      const resporse = await fetch(USER_STATUS, {
+        method: "GET",
+        headers: {
+          Authorization: TOKEN
+        }
+      });
+      const result = await resporse.json();
+      // console.log('결과보자',result.message);
+      if (result.message) {
+        return saveNotiData("EMPTY_UPDATES");
+      } else {
+        return saveNotiData(result.data);
+      }
+    };
+    //! 메세지 데이터 패치
+    const fetchMessageDataState = () => {
+      fetch(USER_MESSAGE, {
+        method: "GET",
+        headers: {
+          Authorization: TOKEN
+        }
+      })
+        .then((res) => res.json())
+        .then((result) => saveMessageData(result.data));
+    };
+    const onClickNoti = () => {
+      fetchNotiDataState();
+      changeNav(checkCurrentNav(6));
+    };
+    const onClickMessageBtn = () => {
+      fetchMessageDataState();
+      changeNav(checkCurrentNav(7));
+    };
+    // 팔로우 알람 내역 패치
+    useEffect(() => {
+      // 알람 불 패치
+      fetchUser();
+      fetchRedLight();
+    }, []);
+    
+    return (
+      <>
+        <RightWrap>
+          <Ul>
+            <Link href="/">
+              <Li
+                nav
+                on={checkId(4)}
+                style={{}}
+                onClick={() => {
+                  changeNav(checkCurrentNav(4));
+                }}>
+                Upload
+              </Li>
+            </Link>
+            <Li
+              on={checkId(5)}
+              onClick={() => {
+                changeNav(checkCurrentNav(5));
+              }}
+              style={{width:'131px'}}>
+              <MarginWrap right="13px">
+                {<UserAvatar size="25px" url={userData['user_image']} />} 
+              </MarginWrap>
+              {userData["user_name"]}
+              <MarginWrap left="10px">
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  style={{
+                    fontSize: "10px"
+                  }}
+                />
+              </MarginWrap>
+            </Li>
+            <Li // noti
+              on={checkId(6)}
+              onClick={onClickNoti}>
+              {!notiChacked && <RedDot />}
+              <MarginWrap left="15px" right="15px">
+                <FontAwesomeIcon
+                  icon={faBell}
+                  style={{
+                    fontSize: "18px"
+                  }}
+                />
+              </MarginWrap>
+            </Li>
+            <Li // message
+              on={checkId(7)}
+              onClick={onClickMessageBtn}>
+              {!messageChacked && <RedDot />}
+              <MarginWrap left="15px" right="15px">
+                <FontAwesomeIcon
+                  icon={faEnvelope}
+                  style={{
+                    fontSize: "18px"
+                  }}
+                />
+              </MarginWrap>
+            </Li>
+            <Li // dot
+              on={checkId(8)}
+              onClick={(e) => {
+                changeNav(checkCurrentNav(8));
+              }}>
+              <MarginWrap left="15px" right="15px">
+                <FontAwesomeIcon
+                  icon={faEllipsisH}
+                  style={{
+                    fontSize: "20px"
+                  }}
+                />
+              </MarginWrap>
+            </Li>
+          </Ul>
+        </RightWrap>
+      </>
+    );
   }
-                              // 팔로우 알람 내역 패치
-                              useEffect(() => {
-                                // 알람 불 패치
-                                fetchRedLight();
-                              }, []);
-
-                              return (
-                                <>
-                                  <RightWrap>
-                                    <Ul>
-                                      <Link href="/">
-                                        <Li
-                                          nav
-                                          on={checkId(4)}
-                                          style={{}}
-                                          onClick={()=>{
-                                              changeNav(checkCurrentNav(4));
-                                          }}>
-                                          Upload
-                                        </Li>
-                                      </Link>
-                                      <Li
-                                        on={checkId(5)}
-                                        onClick={() => {
-                                          changeNav(checkCurrentNav(5));
-                                        }}>
-                                        <MarginWrap right="8px">
-                                          <UserAvatar size="25px" />
-                                        </MarginWrap>
-                                        zuzuworld
-                                        <MarginWrap left="8px">
-                                          <FontAwesomeIcon
-                                            icon={faChevronDown}
-                                            style={{
-                                              fontSize: "10px"
-                                            }}
-                                          />
-                                        </MarginWrap>
-                                      </Li>
-                                      <Li // noti
-                                        on={checkId(6)}
-                                        onClick={onClickNoti}>
-                                        {!notiChacked && <RedDot />}
-                                        <MarginWrap left="15px" right="15px">
-                                          <FontAwesomeIcon
-                                            icon={faBell}
-                                            style={{
-                                              fontSize: "18px"
-                                            }}
-                                          />
-                                        </MarginWrap>
-                                      </Li>
-                                      <Li // message
-                                        on={checkId(7)}
-                                        onClick={(e) => {
-                                          // todo 클릭하면 상태 변경 post 보내기
-                                          changeNav(checkCurrentNav(7));
-                                        }}>
-                                        {!messageChacked && <RedDot />}
-                                        <MarginWrap left="15px" right="15px">
-                                          <FontAwesomeIcon
-                                            icon={faEnvelope}
-                                            style={{
-                                              fontSize: "18px"
-                                            }}
-                                          />
-                                        </MarginWrap>
-                                      </Li>
-                                      <Li // dot
-                                        on={checkId(8)}
-                                        onClick={(e) => {
-                                          changeNav(checkCurrentNav(8));
-                                        }}>
-                                        <MarginWrap left="15px" right="15px">
-                                          <FontAwesomeIcon
-                                            icon={faEllipsisH}
-                                            style={{
-                                              fontSize: "20px"
-                                            }}
-                                          />
-                                        </MarginWrap>
-                                      </Li>
-                                    </Ul>
-                                  </RightWrap>
-                                </>
-                              );
-                            }
 
 const RedDot = styled.div`
   border-radius: 50%;
@@ -215,7 +255,7 @@ ${css.flexCenter}
 font-family:${theme.font};
 color: ${(props) => (props.orange ? null : theme.gray)};
 background-color : ${(props) => props.on === 'true' && theme.black};
-font-size:13px;
+font-size:14px;
 text-align:center;
 line-height:1.2em;
 padding: ${(props) => (props.nav && "0 10px" )};
@@ -229,14 +269,13 @@ color: ${(props) => props.on && theme.gray};
 `;
 
 
-
-
 const mapStateToProps = (state) => {
   return {
     selectNav: state.selectNav,
     messageChacked: state.messageChacked,
     notiChacked: state.notiChacked,
-    notiData: state.notiData
+    notiData: state.notiData,
+    userData: state.userData
   };}
 
 
@@ -245,5 +284,7 @@ export default connect(mapStateToProps, {
   changeNav,
   checkNoti,
   checkMessage,
-  saveNotiData
+  saveNotiData,
+  saveMessageData,
+  saveUserData
 })(RightBox);

@@ -3,47 +3,90 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as icon from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { connect } from "react-redux";
 import theme, * as css from '../../global/theme';
 import UserAvartar from '../userAvatar/UserAvatar';
+import {
+  USER_NOTIFICATION,
+  TOKEN,
+  USER_STATUS,
+  FAMOUS,
+  USER_FOLLOW
+} from "../../global/api";
+import {
+  saveMessageData
+} from "../../redux/header/headerActions";
+import fetch from "isomorphic-unfetch";
 
 
-const Notifications = ({ data }) => (
-  <>
-    <Ul>
-      {data.length !== 0 ?  (
-        data.map((li) => (
-          <Link href="/">
+
+const Messages = (props) => {
+  const { messageData, saveMessageData } = props;
+
+ const timer = (old) => {
+   // old = 2020-03-17T11:21:23.464Z
+   let year = old.slice(0, 4); // 2019
+   let month = old.slice(5, 7); // 05
+   let date = old.slice(8, 10); // 10
+   let hour = old.slice(11, 13); // 2
+   let min = old.slice(14, 16); // 18
+   let sec = old.slice(17, 19); // 90
+
+   let now = new Date();
+
+   let nowYear = now.getFullYear(); //2020
+   let nowMonth = now.getMonth() + 1; // 달 0~11달 //
+   let nowDate = now.getDate(); //17
+   let nowHours = now.getHours(); // 0~11시
+   let nowMin = now.getMinutes(); // 0~59분
+   let nowSec = now.getSeconds(); // 0~59초
+
+   if (nowYear - Number(year) >= 1) return nowYear - year + " years ago";
+   if (nowMonth - Number(month) >= 1) return nowMonth - month + " month ago";
+   if (nowDate + 1 - Number(date) >= 1) return nowHours - hour + " hours ago";
+   if (nowMin - Number(min) >= 1) return nowHours - hour + " hours ago";
+   if (nowSec - Number(sec) >= 1) return nowHours - hour + " hours ago";
+ };
+
+
+  return (
+    <>
+      <Ul>
+        {messageData ? (
+          messageData.map((li) => (
             <Li>
-              <UserAvartar size="42px" />
+              <UserAvartar size="42px" url={li["from_user_img"]} />
               <PaddingWrap left="10px">
                 <FirstLine>
                   <div>
-                    <UserName>{li.userId}</UserName>
-                    <StarIcon />
+                    <UserName>{li["from_user_name"]}</UserName>
+                    {/* {<StarIcon />} */}
                   </div>
-                  <div>{li.time}</div>
+                  <div>{timer(li["last_message_time"])}</div>
                 </FirstLine>
                 <SecondLine>
                   <div>
-                    <span>{li.message}</span>
+                    <span>{li["last_message"]}</span>
                   </div>
                 </SecondLine>
               </PaddingWrap>
             </Li>
-          </Link>
-        ))
-      ) : (
-        <LoadingBox>
-          <img
-            src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
-            alt="loading"
-          />
-        </LoadingBox>
-      )}
-    </Ul>
-    <Button>View all notifications</Button>
-  </>
-);
+          ))
+        ) : (
+          <LoadingBox>
+            <img
+              src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
+              alt="loading"
+            />
+          </LoadingBox>
+        )}
+      </Ul>
+      <Link href="/messages">
+        <Button>View all notifications</Button>
+      </Link>
+    </>
+  );
+}
 
 const LoadingBox = styled.div`
   padding: 20px;
@@ -65,6 +108,7 @@ const FollowBtn = styled.div`
   background-color: ${theme.black};
   border: 1px solid ${theme.chacoal};
   max-width: 100px;
+  font
   &:hover {
     border: 1px solid ${theme.dGray};
   }
@@ -146,7 +190,6 @@ const Ul = styled.ul`
 `;
 
 const Li = styled.li`
-  cursor: pointer;
   height: 63px;
   font-family: ${theme.font};
   display: flex;
@@ -175,11 +218,15 @@ const Button = styled.button`
   border: none;
   color: ${theme.gray};
   font-size: 14px;
-
   &:hover {
     color: ${theme.snow};
     background-color: ${theme.chacoal};
   }
 `;
 
-export default Notifications;
+
+const mapStateToProps = (state) => ({
+  messageData: state.messageData
+});
+
+export default connect(mapStateToProps, { saveMessageData })(Messages);
