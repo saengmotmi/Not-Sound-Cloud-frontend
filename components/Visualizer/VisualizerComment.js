@@ -2,17 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 
 // visualizerComp에 병합 예정
-const VisualComment = (props) => {
-  const { user_name, src, content, position } = props;
+const VisualComment = ({ user_id, src, content, position, big = null }) => {
 
   return (
-    <CommentDiv position={position}>
+    <CommentDiv position={position} big={big}>
       <img
         src="https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg"
         alt=""
       />
       <p>
-        <Id>{user_name}</Id>
+        <Id>{user_id}</Id>
         <Comment>{content}</Comment>
       </p>
     </CommentDiv>
@@ -24,9 +23,9 @@ export default VisualComment;
 
 const CommentDiv = styled.div`
   position: absolute;
-  top: 80px;
+  top: ${({ big }) => (!big ? 50 : 100)}px;
   z-index: 18;
-  left: ${(props) => props.position}px;
+  left: ${({ position }) => position}px;
 `;
 
 const Id = styled.span`
