@@ -2,19 +2,27 @@
 import styled from 'styled-components';
 import { flexCenter } from '../../global/theme';
 import Header from "../header/Header";
-
+import Sidebar from "../sidebar/Sidebar";
 
 const Layout = ({ children }) => (
   <CenterContainer>
-    <Header/>
-    {children}
+    <Header />
+    <Main>
+      <Sidebar />
+      {children}
+    </Main>
   </CenterContainer>
 );
 
 const CenterContainer = styled.div`
 ${flexCenter};
-
 flex-direction: column;
+`;
+
+const Main = styled.div`
+margin-top : 100px;
+display:flex;
+flex-direction:row-reverse;
 `;
 
 // Layout.propTypes = {
