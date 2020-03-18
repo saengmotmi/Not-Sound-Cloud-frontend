@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import theme from "../global/theme";
+import VisualizerComp from "../components/VisualizerComp";
+import Visualizer from "../pages/Visualizer";
 
 const MusicStreaming = () => {
   const [resMusic, setResMusic] = useState(null);
@@ -9,25 +11,38 @@ const MusicStreaming = () => {
   const [buffer, setBuffer] = useState(null);
   const [context, setContext] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(null);
   const [startedAt, setStartedAt] = useState(null);
-  const [musicNum, setMusicNum] = useState(1);
+  const [musicNum, setMusicNum] = useState("1/1");
   const [navUp, setNavUp] = useState(null);
+  const [childOffsetX, setChildOffsetX] = useState(1);
+
+  // useEffect(() => {
+  //   getMusicApi();
+  // },[music]);
 
   useEffect(() => {
-    getMusicApi();
-  },[music]);
-
-  useEffect(() => {
-    setNavUp("up");
+    setNavUp("up"); // 하단바 올라오는 거
   }, []);
 
-  const getMusicApi = async () => {
-      // load audio file from server
-    const res = await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/1`)
+  // 스트리밍 버튼
+  const getMusicApi = async (startSec) => {
+
+    // load audio file from server
+    // const res = await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}`)
+    if (isPlaying) {
+      await musicStop();
+    }
+
+    console.log("isPlaying", isPlaying, "startSec", startSec, "buffer", buffer);
+
+    await fetch(`http://10.58.3.91:8000/song/playview/1/${startSec}`)
       .then(res => res.arrayBuffer())
-      .then(res => setResMusic(res))
-      .then(console.log('done'));
+      .then(res => musicPlay(res));
+      // .then(res => setResMusic(res))
+      // .then(res => console.log("then", res));
+
+    // await console.log("outside", resMusic);
+    // await musicPlay();
   }
 
   const getAudioContext = () => {
@@ -51,12 +66,13 @@ const MusicStreaming = () => {
     // }, 1000);
   // }
 
-  const musicPlay = async () => {
-    console.log(resMusic);
+  // play 버튼
+  const musicPlay = async (res) => {
+    console.log(res);
         // create audio context
     const audioContext = getAudioContext();
     // create audioBuffer (decode audio file)
-    const audioBuffer = await audioContext.decodeAudioData(resMusic);
+    const audioBuffer = await audioContext.decodeAudioData(res);
     // create audio source
     const source = audioContext.createBufferSource();
 
@@ -73,32 +89,49 @@ const MusicStreaming = () => {
     console.log("start");
   }
 
+  // stop 버튼
   const musicStop = async () => {
     music.stop();
     setIsPlaying(false);
   };
 
+  // pause 버튼
   const musicPause = async () => {
     isPlaying ? context.suspend() : context.resume();
     setIsPlaying(!isPlaying);
   }
 
+  // visualizer에 props로 주는 함수
+  const showOffsetX = offsetX => {
+    setChildOffsetX(offsetX);
+    console.log(offsetX);
+    getMusicApi(parseInt((offsetX / 640) * buffer.duration));
+  }
+
   return (
     <>
-      <button onClick={getMusicApi} type="button">
-        스트리밍
+      <Visualizer offsetX={showOffsetX}></Visualizer>
+      <button onClick={() => getMusicApi(childOffsetX)} type="button">
+        초기화
       </button>
-      <div>duration {buffer && buffer.duration}</div>
+      {/* <div>duration {buffer && buffer.duration}</div> */}
       <div>startedAt {startedAt} </div>
       <div>rate </div>
-      <div>currentTime {currentTime && currentTime} </div>
+      {/* <div>
+        childOffsetX{" "}
+        {childOffsetX &&
+          childOffsetX +
+            " " +
+            (childOffsetX / 640) * 100 + "%" +
+            " " +
+            parseInt((childOffsetX / 640) * buffer.duration)}{" "}
+      </div> */}
       <input type="text" onChange={event => setMusicNum(event.target.value)} />
+
       <BotPlayer className={navUp}>
         <PlayButtonWrapper isPlaying={isPlaying}>
           <button onClick={musicPlay} type="button" />
-          {/* <button onClick={musicStop} type="button">
-            stop
-          </button> */}
+          <button onClick={musicStop} type="button"></button>
           <button onClick={musicPause} type="button">
             {/* {isPlaying ? "suspend" : "resume"} */}
           </button>

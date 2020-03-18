@@ -4,7 +4,7 @@ import theme from '../global/theme';
 import VisualComment from '../components/VisualizerComment';
 
 
-const Visualizer = () => {
+const Visualizer = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const canvasRefTop = useRef(null);
   const canvasRefBot = useRef(null);
@@ -97,6 +97,7 @@ const Visualizer = () => {
 
         setCanvasWidth(e.nativeEvent.offsetX);
         setCount(e.nativeEvent.offsetX);
+        props.offsetX(e.nativeEvent.offsetX);
       } else if (pos === 'bot') {
         console.log('bot'); // 댓글을 어떻게든 해야지
       }
