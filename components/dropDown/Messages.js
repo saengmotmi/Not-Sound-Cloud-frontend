@@ -14,14 +14,15 @@ import {
   USER_FOLLOW
 } from "../../global/api";
 import {
-  saveMessageData
+  saveMessageData,
+  changeNav
 } from "../../redux/header/headerActions";
 import fetch from "isomorphic-unfetch";
 
 
 
 const Messages = (props) => {
-  const { messageData, saveMessageData } = props;
+  const { messageData, saveMessageData,changeNav } = props;
 
  const timer = (old) => {
    // old = 2020-03-17T11:21:23.464Z
@@ -55,11 +56,11 @@ const Messages = (props) => {
         {messageData ? (
           messageData.map((li) => (
             <Li>
-              <UserAvartar size="42px" url={li["from_user_img"]} />
+              <UserAvartar size="42px" url={li["to_user_img"]} />
               <PaddingWrap left="10px">
                 <FirstLine>
                   <div>
-                    <UserName>{li["from_user_name"]}</UserName>
+                    <UserName>{li["to_user_name"]}</UserName>
                     {/* {<StarIcon />} */}
                   </div>
                   <div>{timer(li["last_message_time"])}</div>
@@ -82,7 +83,7 @@ const Messages = (props) => {
         )}
       </Ul>
       <Link href="/messages">
-        <Button>View all notifications</Button>
+        <Button onClick={() => changeNav(0)}>View all notifications</Button>
       </Link>
     </>
   );
@@ -229,4 +230,4 @@ const mapStateToProps = (state) => ({
   messageData: state.messageData
 });
 
-export default connect(mapStateToProps, { saveMessageData })(Messages);
+export default connect(mapStateToProps, { saveMessageData,changeNav })(Messages);

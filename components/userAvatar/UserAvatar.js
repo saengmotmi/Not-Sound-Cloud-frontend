@@ -2,19 +2,19 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import * as css from '../../global/theme';
 
-const UserAvartar = ({ size, url, rect }) => {
+const UserAvartar = ({ id,size, url, rect }) => {
   // componentDidMount
   useEffect(() => {}, []);
 
   return (
-    <UserAvartarWrap size={size} rect={rect}>
-      <UserPic url={url} />
+    <UserAvartarWrap id={id+'-avata-wrap'} size={size} rect={rect}>
+      <UserPic url={url} id={id+'-avatar-id'} />
     </UserAvartarWrap>
   );
 };
 
 const UserAvartarWrap = styled.div`
-width :${(props) => props.size || '50px'};
+min-width :${(props) => props.size || '50px'};
 height :${(props) => props.size || '50px'};
 border-radius: ${(props)=> props.rect ? '0%' : '50%' };
 overflow:hidden;
