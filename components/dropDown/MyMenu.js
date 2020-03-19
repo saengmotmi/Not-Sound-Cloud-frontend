@@ -26,10 +26,6 @@ const MyMenu = ({ data }) => (
   </Ul>
 );
 
-// MyMenu.propTypes = {
-//   data: PropTypes.array,
-// };
-
 
 const MarginWrap = styled.div`
 margin-right: ${(props) => props.right || '8px'};
@@ -37,7 +33,6 @@ margin-left: ${(props) => props.left || '8px'};
 margin-top: ${(props) => props.top || '0'};
 margin-bottom: ${(props) => props.bottom || '0'};
 `;
-
 
 const Ul = styled.ul`
 display:flex;

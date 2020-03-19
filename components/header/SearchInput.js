@@ -67,7 +67,7 @@ transition: .2s background-color ease-in-out;
   font-family:${theme.font};
   font-size:14px;
   position: relative;
-  top:-1px;
+  top:1px;
   color:${theme.gray};
 }
 &:focus {

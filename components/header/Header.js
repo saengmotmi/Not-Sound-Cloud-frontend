@@ -102,6 +102,7 @@ const Header = (props) => {
 };
 
 const HeaderContainer = styled.div`
+z-index:9999999;
 position:fixed;
 top:0;
 width:100%;
@@ -129,7 +130,7 @@ width:1240px;
 
 const MyMenuWrap = styled.div`
 position: relative;
-right: 148px;
+right: 143px;
 
 `;
 const DotMenuWrap = styled.div`

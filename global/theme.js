@@ -1,17 +1,17 @@
 import { css } from 'styled-components';
 
 const theme = {
-  yellowOrange: '#ff6e00',
-  orange: '#f50',
-  deepOrange: '#fc361d',
-  black: '#111',
-  chacoal: '#333',
-  dGray: '#777',
-  gray: '#999',
-  lGray: '#ccc',
-  snow: '#e5e5e5',
-  fontGlobal: 'Interstate,Roboto, \'Noto Sans KR\', sans-serif',
-  font: 'Interstate,Roboto, \'Noto Sans KR\', sans-serif',
+  yellowOrange: "#ff6e00",
+  orange: "#f50",
+  deepOrange: "#fc361d",
+  black: "#111",
+  chacoal: "#333",
+  dGray: "#777",
+  gray: "#999",
+  lGray: "#ccc",
+  snow: "#e5e5e5",
+  fontGlobal: "'Noto Sans KR', Roboto, sans-serif",
+  font: "'Noto Sans KR', Roboto, sans-serif"
 };
 
 

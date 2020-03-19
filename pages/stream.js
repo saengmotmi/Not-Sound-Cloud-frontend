@@ -28,7 +28,7 @@ const Stream = () => {
 
   return (
     <>
-      <StreamContainer>
+      <StreamContainer on>
         <StreamLeft>
           왼쪽
           <p className="top-msg">Hear the latest posts from the people you’re following:</p>

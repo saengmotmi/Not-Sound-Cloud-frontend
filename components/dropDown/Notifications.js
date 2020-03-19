@@ -20,112 +20,154 @@ import {
 import fetch from "isomorphic-unfetch";
 
 const Notifications = (props) => {
-  const { notiData } = props;
-  const timer = (old) => {
-    // old = 2020-03-17T11:21:23.464Z
-    let year = old.slice(0, 4); // 2019
-    let month = old.slice(5, 7); // 05
-    let date = old.slice(8, 10); // 10
-    let hour = old.slice(11, 13); // 2
-    let min = old.slice(14, 16); // 18
-    let sec = old.slice(17, 19); // 90
+    const { notiData, saveNotiData } = props;
+    const timer = (old) => {
+      // old = 2020-03-17T11:21:23.464Z
+      let year = old.slice(0, 4); // 2019
+      let month = old.slice(5, 7); // 05
+      let date = old.slice(8, 10); // 10
+      let hour = old.slice(11, 13); // 2
+      let min = old.slice(14, 16); // 18
+      let sec = old.slice(17, 19); // 90
 
-    let now = new Date();
+      let now = new Date();
 
-    let nowYear = now.getFullYear(); //2020
-    let nowMonth = now.getMonth() + 1; // 달 0~11달 //
-    let nowDate = now.getDate(); //17
-    let nowHours = now.getHours(); // 0~11시
-    let nowMin = now.getMinutes(); // 0~59분
-    let nowSec = now.getSeconds(); // 0~59초
+      let nowYear = now.getFullYear(); //2020
+      let nowMonth = now.getMonth() + 1; // 달 0~11달 //
+      let nowDate = now.getDate(); //17
+      let nowHours = now.getHours(); // 0~11시
+      let nowMin = now.getMinutes(); // 0~59분
+      let nowSec = now.getSeconds(); // 0~59초
 
-    if (nowYear - Number(year) >= 1) return nowYear - year + " years ago";
-    if (nowMonth - Number(month) >= 1) return nowMonth - month + " month ago";
-    if (nowDate + 1 - Number(date) >= 1) return nowHours - hour + " hours ago";
-    if (nowMin - Number(min) >= 1) return nowHours - hour + " hours ago";
-    if (nowSec - Number(sec) >= 1) return nowHours - hour + " hours ago";
-  };
+      if (nowYear - Number(year) >= 1)
+        return nowYear - year + " years ago";
+      if (nowMonth - Number(month) >= 1)
+        return nowMonth - month + " month ago";
+      if (nowDate + 1 - Number(date) >= 1)
+        return nowHours - hour + " hours ago";
+      if (nowMin - Number(min) >= 1)
+        return nowHours - hour + " hours ago";
+      if (nowSec - Number(sec) >= 1)
+        return nowHours - hour + " hours ago";
+    };
 
+    // !todo 언팔로우 패치 연결하기..body에는 username 보내야 함!
+    const fetchFollowState = async (userId) => {
+      const response = await fetch(USER_FOLLOW, {
+        method: "POST",
+        headers: {
+          Authorization: TOKEN
+        },
+        body: JSON.stringify({
+          to_follow_id: userId
+        })
+      });
+      const result = await response.json();
 
+      if (await result) {
+      }
+    };
+    //! 노티 데이터 펫치
+    const fetchNotiDataState = async () => {
+      const resporse = await fetch(USER_STATUS, {
+        method: "GET",
+        headers: {
+          Authorization: TOKEN
+        }
+      });
+      const result = await resporse.json();
+      console.log(result);
 
-// !todo 언팔로우 패치 연결하기..body에는 username 보내야 함!
-// const fetchFollowState = async () => {
-//   const response = await fetch(USER_FOLLOW, {
-//     method : 'POST',
-//     body : JSON.stringify({
-//       to_follow_id : 117 //!여기 숫자 대신 변수로 변경하기!!
-//     })
-//   });
-//   const result = await response.json();
-//   if (await result) { 
-  
-//   }
-// }
+      if (result.message) {
+        return saveNotiData("EMPTY_UPDATES");
+      } else {
+        return saveNotiData(result.data);
+      }
+    };
 
-  return (
-    <>
-      <Ul>
-        {notiData !== "EMPTY_UPDATES" ? (
-          notiData.map((li) => {
-            // console.log(li, "리스트출력!!!");
-            return (
-              <Link
-                href="/"
-                // key={
-                // !여기에 유저네임으로 키 넣기!}
-              >
-                <Li>
-                  <UserAvartar size="42px" url={li["follower_image"]} />
-                  <PaddingWrap left="10px">
-                    <FirstLine>
-                      <div>
-                        <UserName>{li["follower_name"]}</UserName>
-                        {li["follower_follower_count"] > FAMOUS && <StarIcon />}
-                        <span>is following you</span>
-                      </div>
-                      <div>{timer(li["follow_at"])}</div>
-                    </FirstLine>
-                    <SecondLine>
-                      <div>
-                        <FontAwesomeIcon icon={icon.faUser} />
-                        <span>{li["follower_follower_count"]}</span>
-                        <FontAwesomeIcon
-                          icon={icon.faAlignCenter}
-                          style={{ transform: "rotate(270deg)" }}
-                        />
-                        <span>{li["follower_song_count"]}</span>
-                      </div>
-                      <FollowBtn
-                      // onClick={                      }
-                      >
-                        <span>
+    const sendPOST = async(e) => {
+      console.log('여기',parseInt(e.target.id))
+      let id = parseInt(e.target.id)
+      if (typeof id === 	"number") {
+        await fetchFollowState(parseInt(e.target.id));
+        // ! 여기서 post 1회 보내고, get 다시 받아 state변경!
+        await fetchNotiDataState();
+      }
+    };
+
+    return (
+      <>
+        <Ul>
+          { notiData !== "EMPTY_UPDATES" ? (
+            notiData !== [] ? (
+            notiData.map((li) => {
+              // console.log(li['follower_id'], "리스트출력!!!");
+              return (
+                <Link
+                  href="/"
+                  key={li["to_follow_id"]}
+                  id={li["follower_id"] + "-noti-data-id-li"}>
+                  <Li>
+                    <UserAvartar size="42px" url={li["follower_image"]} />
+                    <PaddingWrap left="10px">
+                      <FirstLine>
+                        <div>
+                          <UserName>{li["follower_name"]}</UserName>
+                          {li["follower_follower_count"] > FAMOUS && (
+                            <StarIcon />
+                          )}
+                          <span>is following you</span>
+                        </div>
+                        <div>{timer(li["follow_at"])}</div>
+                      </FirstLine>
+                      <SecondLine>
+                        <div>
+                          <FontAwesomeIcon icon={icon.faUser} />
+                          <span>{li["follower_follower_count"]}</span>
                           <FontAwesomeIcon
-                            icon={icon.faUserPlus}
-                            style={{ paddingRight: "6px" }}
+                            icon={icon.faAlignCenter}
+                            style={{
+                              transform: "rotate(270deg)"
+                            }}
                           />
-                          {li.mutual_follow ? "Following" : "follow back"}
-                        </span>
-                      </FollowBtn>
-                    </SecondLine>
-                  </PaddingWrap>
-                </Li>
-              </Link>
-            );
-          })
-        ) : (
-          <LoadingBox>
-            <p>empty updates!</p>
-            {/* <img
-              src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
-              alt="loading"
-            /> */}
-          </LoadingBox>
-        )}
-      </Ul>
-      <Button>View all notifications</Button>
-    </>
-  );
-};
+                          <span>{li["follower_song_count"]}</span>
+                        </div>
+                        {/*팔로우 버튼 클릭하면 이벤트. 해당 id 값을 보낸당! */}
+                        <FollowBtn key={li["follower_id"]} onClick={sendPOST}>
+                          <span id={li["follower_id"] + "-noti-data-id-span"}>
+                            <FontAwesomeIcon
+                              icon={icon.faUserPlus}
+                              style={{
+                                paddingRight: "6px"
+                              }}
+                            />
+                            {li.mutual_follow ? "Following" : "follow back"}
+                          </span>
+                        </FollowBtn>
+                      </SecondLine>
+                    </PaddingWrap>
+                  </Li>
+                </Link>
+              )}))
+              :(
+            <LoadingBox>
+              <img
+                src="https://a-v2.sndcdn.com/assets/images/loader-dark-45940ae3d4.gif"
+                alt="loading"
+              />
+            </LoadingBox>
+          )):(
+            <LoadingBox>
+              <p>empty update</p>
+            </LoadingBox>
+          )}
+        </Ul>
+        <Button>View all notifications</Button>
+      </>
+    )
+}
+
+
 
 const LoadingBox = styled.div`
 padding:20px;
@@ -136,6 +178,10 @@ align-content:center;
 color:${theme.gray};
 p {
   /* padding-bottom:20px; */
+  font-family : ${theme.font};
+  font-size:14px;
+  font-weight: 200;
+
   text-align:center;
 }
 img {
@@ -149,7 +195,7 @@ const FollowBtn = styled.div`
     border:none;
     padding:6px;
     border-radius:3px;
-    background-color:${theme.black};
+    background-color:${theme.orange};
     border: 1px solid ${theme.chacoal};
     max-width:130px;
     &:hover {
@@ -208,6 +254,7 @@ const SecondLine = styled.p`
   height: 24px;
   font-size: 10px;
   span {
+font-family:${theme.font};
     padding: 0 10px 0 5px;
   }
   div:first-child {
