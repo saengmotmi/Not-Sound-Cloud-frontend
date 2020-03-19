@@ -49,8 +49,7 @@ const MusicStreaming = () => {
     //   const rate = (playbackTime * 100) / duration;
     //   console.log(rate, playbackTime, duration);
     // }, 1000);
-  // }
-
+    
   // play 버튼
   const musicPlay = async (res) => {
     console.log(res);

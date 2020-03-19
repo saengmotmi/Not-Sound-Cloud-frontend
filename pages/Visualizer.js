@@ -122,7 +122,6 @@ const Visualizer = (props) => {
         <OverDiv isPlay={count} mouseOn="y" widthProps={`${canvasWidth}`} />
         <OverDiv mouseOn="n" widthProps={`${canvasWidth}`} />
         {commentArr}
-
       </div>
       <input value={inputID} onChange={(event) => typeComment(event, 'id')} type="text" />
       <input value={inputComment} onChange={(event) => typeComment(event, 'comment')} type="text" />
