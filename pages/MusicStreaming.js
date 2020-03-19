@@ -4,6 +4,7 @@ import VisualizerComp from "../components/VisualizerComp";
 import BottomPlayer from "../components/bottomPlayer/BotPlayer";
 
 const MusicStreaming = () => {
+  const [musicData, setMusicData] = useState(null);
   const [music, setMusic] = useState(null); //음원 자체, true가 되면 음원이 준비 됨
   const [buffer, setBuffer] = useState(""); // duration을 얻기 위함
   const [duration, setDuration] = useState(0); // 특정 시점의 전체 길이
@@ -17,6 +18,7 @@ const MusicStreaming = () => {
 
   useEffect(() => {
     setNavUp("botPlayer up"); // 하단바 올라오는 거
+    getMusicInfoApi();
   }, []);
 
   useEffect(() => {
@@ -39,9 +41,16 @@ const MusicStreaming = () => {
     await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
       .then(res => res.arrayBuffer())
       .then(res => musicPlay(res));
+
+    await getMusicInfoApi();
   };
 
-  
+  const getMusicInfoApi = () => {
+    fetch(`http://10.58.3.91:8000/song/play/${musicNum}`)
+      .then(res => res.json())
+      .then(res => setMusicData(res.song[0]));
+  }
+
   // play 버튼
   const musicPlay = async res => {
     console.log(res);
@@ -64,11 +73,11 @@ const MusicStreaming = () => {
     setMusic(source);
     setBuffer(audioBuffer);
     setContext(audioContext);
-    setCurrentMusicNum(musicNum);
+    setCurrentMusicNum(musicNum); // 현재 재생 중인 song_id
     console.log("ready to play");
 
     source.start();
-    setIsPlaying(true);
+    setIsPlaying(true); // 플레이 시작
     console.log("start");
   };
 
@@ -110,6 +119,7 @@ const MusicStreaming = () => {
   return (
     <>
       <VisualizerComp
+        musicData={musicData}
         isPlaying={isPlaying}
         isPause={isPause}
         getMusicApi={getMusicApi}
