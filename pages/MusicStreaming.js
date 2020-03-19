@@ -1,21 +1,35 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 import Visualizer from "../pages/Visualizer";
+import VisualizerComp from "../components/VisualizerComp";
+import BottomPlayer from "../components/bottomPlayer/BotPlayer";
 
 const MusicStreaming = () => {
   const [readyMusic, setReadyMusic] = useState(null);
   const [music, setMusic] = useState(null);
-  const [buffer, setBuffer] = useState(null);
+  const [buffer, setBuffer] = useState("");
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [context, setContext] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [startedAt, setStartedAt] = useState(null);
-  const [musicNum, setMusicNum] = useState("1");
-  const [navUp, setNavUp] = useState(null);
+  const [isPause, setIsPause] = useState(false);
+  const [musicNum, setMusicNum] = useState(1);
+  const [currentMusicNum, setCurrentMusicNum] = useState("1");
+  const [navUp, setNavUp] = useState("");
   const [childOffsetX, setChildOffsetX] = useState(1);
 
   useEffect(() => {
-    setNavUp("up"); // 하단바 올라오는 거
+    setNavUp("botPlayer up"); // 하단바 올라오는 거
   }, []);
+
+  useEffect(() => {
+    //buffer updated
+    if (musicNum === currentMusicNum) {
+      setCurrentTime(buffer.duration); //same musicNum
+    } else if (musicNum !== currentMusicNum) {
+      setDuration(buffer.duration); //diff musicNum
+    }
+  }, [buffer])
 
   // 스트리밍 버튼
   const getMusicApi = async (startSec) => {
@@ -24,7 +38,7 @@ const MusicStreaming = () => {
       await musicStop(); // 만약 재생 중이면 일단 정지
       console.log("stop");
     }
-
+    console.log(startSec + "를 요청합니다");
     await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
       .then(res => res.arrayBuffer())
       .then(res => musicPlay(res));
@@ -66,7 +80,8 @@ const MusicStreaming = () => {
     setMusic(source);
     setBuffer(audioBuffer);
     setContext(audioContext);
-    console.log("done");
+    setCurrentMusicNum(musicNum);
+    console.log("ready to play");
 
     source.start();
     setIsPlaying(true);
@@ -81,8 +96,18 @@ const MusicStreaming = () => {
 
   // pause 버튼
   const musicPause = async () => {
-    isPlaying ? context.suspend() : context.resume();
-    setIsPlaying(!isPlaying);
+    if (isPlaying === true && isPause === true) {
+      console.log(isPlaying, isPause);
+      context.resume();
+    } else if (isPlaying === true && isPause === false) {
+      console.log(isPlaying, isPause);
+      context.suspend();
+    }
+    
+    // setIsPlaying(!isPlaying);
+    setIsPause(!isPause);
+    console.log("pause");
+    
   }
 
   // visualizer에 props로 주는 함수
@@ -91,7 +116,8 @@ const MusicStreaming = () => {
     console.log(offsetX);
 
     if (isPlaying) {
-      getMusicApi(parseInt((offsetX / 640) * buffer.duration));
+      getMusicApi(Math.round((offsetX / 640) * duration)); // 퍼센트 x 전체 길이
+      console.log(Math.round((offsetX / 640) * duration) + "초 재생 요청");
     } else {
       getMusicApi(0);
     }
@@ -99,13 +125,17 @@ const MusicStreaming = () => {
 
   return (
     <>
-      <Visualizer isPlaying={isPlaying} getMusicApi={getMusicApi} offsetX={showOffsetX}></Visualizer>
+      <VisualizerComp
+        isPlaying={isPlaying}
+        getMusicApi={getMusicApi}
+        showOffsetX={showOffsetX}
+        buffer={buffer}
+        interval={duration ? 640 / duration : 1}
+      ></VisualizerComp>
       {/* <button onClick={() => getMusicApi(childOffsetX)} type="button">
         초기화
       </button> */}
       {/* <div>duration {buffer && buffer.duration}</div> */}
-      <div>startedAt {startedAt} </div>
-      <div>rate </div>
       {/* <div>
         childOffsetX{" "}
         {childOffsetX &&
@@ -117,19 +147,20 @@ const MusicStreaming = () => {
       </div> */}
       <input type="text" onChange={event => setMusicNum(event.target.value)} />
 
-      <BotPlayer className={navUp}>
-        <PlayButtonWrapper isPlaying={isPlaying}>
-          <button onClick={musicPlay} type="button" />
-          <button onClick={musicStop} type="button"></button>
-          <button onClick={musicPause} type="button">
-            {/* {isPlaying ? "suspend" : "resume"} */}
-          </button>
-        </PlayButtonWrapper>
-        <ProgressWrapper>
-          <ProgressDiv></ProgressDiv>
-          <ProgressDiv offsetX=""></ProgressDiv>
-        </ProgressWrapper>
-      </BotPlayer>
+      <BottomPlayer
+        navUp={navUp}
+        isPlaying={isPlaying}
+        isPause={isPause}
+        musicPause={musicPause}
+        getMusicApi={getMusicApi}
+        musicStop={musicStop}
+        buffer={buffer}
+        musicNum={musicNum}
+        currentMusicNum={currentMusicNum}
+        currentTime={currentTime}
+        duration={duration}
+        interval={duration ? 640 / duration : 1}
+      ></BottomPlayer>
     </>
   );
 }
@@ -137,54 +168,3 @@ const MusicStreaming = () => {
 export default MusicStreaming;
 
 
-const PlayButtonWrapper = styled.div`
-  button {
-    width: 24px;
-    height: 48px;
-    margin-left: 12px;
-    background: ${props =>
-        props.isPlaying
-          ? css`url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTYgMTloNFY1SDZ2MTR6bTgtMTR2MTRoNFY1aC00eiIvPjwvc3ZnPgo=")`
-          : css`url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTggNXYxNGwxMS03eiIvPjwvc3ZnPgo=")`
-        } no-repeat 55%;
-  }
-`;
-
-const BotPlayer = styled.div`
-  position: fixed;
-  display: flex;
-  flex-direction: row;
-
-  bottom: -48px;
-  z-index: 1000;
-  background-color: yellow;
-  width: 100%;
-  height: 48px;
-  transition: bottom 1s;
-
-  background-color: #f2f2f2;
-
-  &.up {
-    bottom: 0;
-  }
-`;
-
-const ProgressDiv = styled.div`
-  width: 472px;
-  height: 1px;
-  background-color: #ccc;
-  margin: 13px 20px 0 0;
-  /* padding: 10px 0; */
-  position: absolute;
-
-  ${props => {
-    props.offsetX &&
-      css`
-        width: ${props.offsetX};
-      `;
-  }}
-`;
-
-const ProgressWrapper = styled.div`
-  position: relative;
-`

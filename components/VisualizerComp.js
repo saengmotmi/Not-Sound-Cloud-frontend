@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import theme from '../global/theme';
-// import VisualComment from './VisualizerComment';
+import VisualComment from './VisualizerComment';
 
 
 const VisualizerComp = (props) => {
@@ -16,7 +16,8 @@ const VisualizerComp = (props) => {
     my_img_src,
     play_count,
     song_path,
-    comment_count
+    comment_count,
+    interval
   } = props;
 
   const canvasRefTop = useRef(null);
@@ -28,13 +29,13 @@ const VisualizerComp = (props) => {
   const [inputComment, setInputComment] = useState('');
   const [comdata, setComdata] = useState([
     {
-      id: '민또',
-      comment: '개쩔어요',
+      id: '김민규',
+      comment: '좋아요',
       offsetX: 100,
     },
     {
-      id: '광또',
-      comment: '유재석',
+      id: '김광훈',
+      comment: '좋아요',
       offsetX: 400,
     },
   ]);
@@ -47,13 +48,14 @@ const VisualizerComp = (props) => {
   }
 
   // 음악 재생
-  props.play === 1 && 
-    useEffect(() => {
-      const id = setInterval(() => {
-        setCount(count + 1);
-      }, 200);
-      return () => clearInterval(id);
-    }, [count]);
+  // props.play === 1 && 
+    // useEffect(() => {
+    //   const id = setInterval(() => {
+    //     setCount(count + interval/5);
+    //     console.log("count", count, "interval", interval/5)
+    //   }, 200);
+    //   return () => clearInterval(id);
+    // }, [count, interval]);
   
   // 파형 그리기
   useEffect(() => {
@@ -76,7 +78,7 @@ const VisualizerComp = (props) => {
   }, []);
 
   // 댓글 그리기
-  // const commentArr = comdata.map((param, idx) => <VisualComment key={idx} id={param.id} comment={param.comment} offsetX={param.offsetX} src="" />);
+  const commentArr = comdata.map((param, idx) => <VisualComment key={idx} id={param.id} comment={param.comment} offsetX={param.offsetX} src="" />);
 
   // 댓글 추가 state 갱신
   const typeComment = (e, isInput) => {
@@ -88,6 +90,8 @@ const VisualizerComp = (props) => {
     const tempData = [...comdata];
     tempData.push({ id: inputID, comment: inputComment, offsetX: count });
     setComdata(tempData);
+    setInputID("");
+    setInputComment("");
   };
 
   const onCanvasMove = (e) => {
@@ -97,9 +101,18 @@ const VisualizerComp = (props) => {
   const onCanvasClick = (e, pos) => {
     if (e.nativeEvent.offsetX < 640) {
       if (pos === 'top') {
-        console.log(`${Math.ceil(e.nativeEvent.offsetX / 640 * 100)}%`);
-        setCanvasWidth(e.nativeEvent.offsetX);
-        setCount(e.nativeEvent.offsetX);
+        console.log(e.nativeEvent.offsetX, `${Math.round(e.nativeEvent.offsetX / 640 * 100)}%`);
+
+        if (props.isPlaying) {
+          setCanvasWidth(e.nativeEvent.offsetX);
+          setCount(e.nativeEvent.offsetX);
+          props.showOffsetX(e.nativeEvent.offsetX);
+        } else {
+          setCanvasWidth(0);
+          setCount(0);
+          props.showOffsetX(0);
+        }
+
       } else if (pos === 'bot') {
         console.log('bot'); // 댓글을 어떻게든 해야지
       }
@@ -154,7 +167,7 @@ const VisualizerComp = (props) => {
             />
             <OverDiv isPlay={count} mouseOn="y" widthProps={`${canvasWidth}`} />
             <OverDiv mouseOn="n" widthProps={`${canvasWidth}`} />
-            {/* {commentArr} */}
+            {commentArr}
           </CanvasContainer>
           <CommentContainer>
             <img src={my_img_src} />
@@ -162,7 +175,7 @@ const VisualizerComp = (props) => {
             <input
               placeholder="Write a comment"
               onChange={event => typeComment(event, "comment")}
-              onSubmit={addComment}
+              onKeyDown={(event) => addComment(event)}
               type="text"
             />
             {/* <button onClick={addComment} type="button">
@@ -178,7 +191,7 @@ const VisualizerComp = (props) => {
             </AcitonBtn>
             <PlayCount>
               <div className="play-img"></div>
-              <span>{play_count.toLocaleString()}</span>
+              {/* <span>{play_count.toLocaleString()}</span> */}
               <div className="cmnt-img"></div>
               <span>{comment_count}</span>
             </PlayCount>

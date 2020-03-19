@@ -25,6 +25,7 @@ const CommentDiv = styled.div`
   position: absolute;
   top: 80px;
   left: ${(props) => props.offset}px;
+  z-index: 11;
 `;
 
 const Id = styled.span`
