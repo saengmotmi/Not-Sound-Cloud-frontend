@@ -3,24 +3,25 @@ import styled, { css } from "styled-components";
 import theme from "../global/theme";
 import VisualizerComp from '../components/VisualizerComp';
 
-const mockData = {
+const song = {
   repost_id: "바다코끼리",
   repost_img_src:
     "https://i1.sndcdn.com/avatars-LFRcPhK9aBrPrGQV-O60JGw-t50x50.jpg",
   repost_time: 4, //reposted a track 4 hours ago
   post_id: "Ziiin",
-  song_title: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
-  song_img_src:
+  song_name: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
+  small_img_url:
     "https://i1.sndcdn.com/artworks-bPFTZjehyPP0iCdP-FzXVUQ-t200x200.jpg",
   tag: "# Hip-hop & Rap",
   my_img_src: "https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg",
   play_count: 4706, // toLocaleString
-  comment_count: 4
+  comment_count: 4,
+  song_path: "2.mp3"
 };
 
 const datatest = [1,2,3]
 
-const vctest = datatest.map(param => (<div><VisualizerComp key={param} play={param} {...mockData}></VisualizerComp></div> ));
+const vctest = datatest.map(param => (<div><VisualizerComp key={param} play={param} {...song}></VisualizerComp></div> ));
 
 
 const Stream = () => {

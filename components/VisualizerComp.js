@@ -10,11 +10,12 @@ const VisualizerComp = (props) => {
     repost_img_src,
     repost_time,
     post_id,
-    song_title,
-    song_img_src,
+    song_name,
+    small_img_url,
     tag,
     my_img_src,
     play_count,
+    song_path,
     comment_count
   } = props;
 
@@ -117,7 +118,7 @@ const VisualizerComp = (props) => {
       </div>
       <VisualizerContainer>
         <div>
-          <SongImg src={song_img_src} width="160" height="160" />
+          <SongImg src={small_img_url} width="160" height="160" />
         </div>
 
         <div>
@@ -127,7 +128,7 @@ const VisualizerComp = (props) => {
             </PlayButton>
             <div>
               <p>{post_id}</p>
-              <p>{song_title}</p>
+              <p>{song_name}</p>
             </div>
             <div>
               <TagSpan>{tag}</TagSpan>
