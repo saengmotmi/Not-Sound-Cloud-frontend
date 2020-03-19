@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import { flexCenter } from '../../global/theme';
 import Header from "../header/Header";
+import BottomPlayer from '../bottomPlayer/BotPlayer';
 
 
 const Layout = ({ children }) => (
@@ -12,13 +13,8 @@ const Layout = ({ children }) => (
 );
 
 const CenterContainer = styled.div`
-${flexCenter};
-
-flex-direction: column;
+  ${flexCenter};
+  flex-direction: column;
 `;
-
-// Layout.propTypes = {
-//   children: PropTypes.node.isRequired,
-// };
 
 export default Layout;

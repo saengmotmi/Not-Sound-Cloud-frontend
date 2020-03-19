@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled, { css } from "styled-components";
-import theme from "../global/theme";
 import VisualizerComp from '../components/VisualizerComp';
+import MusicStreaming from "./MusicStreaming";
+import Layout from "../components/layout/Layout";
+import theme from "../global/theme";
+import BottomPlayer from "../components/bottomPlayer/BotPlayer";
+
 
 const song = {
   repost_id: "바다코끼리",
@@ -21,22 +25,35 @@ const song = {
 
 const datatest = [1,2,3]
 
-const vctest = datatest.map(param => (<div><VisualizerComp key={param} play={param} {...song}></VisualizerComp></div> ));
+const vctest = datatest.map(param => (
+  <div key={param}>
+    <VisualizerComp play={param} {...song}></VisualizerComp>
+  </div>
+));
 
 
 const Stream = () => {
-  const a = 0;
+  const [navUp, setNavUp] = useState(""); // 하단 바 애니메이션
+
+  useEffect(() => {
+    setNavUp("botPlayer up"); // 하단바 올라오는 거
+  }, []);
 
   return (
     <>
-      <StreamContainer>
-        <StreamLeft>
-          왼쪽
-          <p className="top-msg">Hear the latest posts from the people you’re following:</p>
-          {vctest}
-        </StreamLeft>
-        <StreamRight>오른쪽</StreamRight>
-      </StreamContainer>
+      <Layout>
+        <StreamContainer>
+          <StreamLeft>
+            왼쪽
+            <p className="top-msg">
+              Hear the latest posts from the people you’re following:
+            </p>
+            {vctest}
+          </StreamLeft>
+          <StreamRight>오른쪽</StreamRight>
+        </StreamContainer>
+        <BottomPlayer navUp={navUp} />
+      </Layout>
     </>
   );
 }
@@ -48,6 +65,7 @@ const StreamLeft = styled.div`
   flex-direction: column;
   border-right: 1px solid #f2f2f2;
   padding-right: 30px;
+  margin: 46px 0 48px 0;
 
   .top-msg {
     color: #999;

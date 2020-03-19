@@ -41,25 +41,18 @@ const MusicStreaming = () => {
       .then(res => musicPlay(res));
   };
 
-  const getAudioContext = () => {
-    AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioContent = new AudioContext();
-    return audioContent;
-  };
-
-  // const startedAt = Date.now();
-  // const duration = source.buffer.duration;
-
-  // setInterval(() => {
-  //   const playbackTime = (Date.now() - startedAt) / 1000;
-  //   const rate = (playbackTime * 100) / duration;
-  //   console.log(rate, playbackTime, duration);
-  // }, 1000);
-
+  
   // play 버튼
   const musicPlay = async res => {
     console.log(res);
+
     // create audio context
+    const getAudioContext = () => {
+      AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioContent = new AudioContext();
+      return audioContent;
+    }
+
     const audioContext = getAudioContext();
     // create audioBuffer (decode audio file)
     const audioBuffer = await audioContext.decodeAudioData(res);
@@ -149,3 +142,12 @@ const MusicStreaming = () => {
 export default MusicStreaming;
 
 
+
+  // const startedAt = Date.now();
+  // const duration = source.buffer.duration;
+
+  // setInterval(() => {
+  //   const playbackTime = (Date.now() - startedAt) / 1000;
+  //   const rate = (playbackTime * 100) / duration;
+  //   console.log(rate, playbackTime, duration);
+  // }, 1000);

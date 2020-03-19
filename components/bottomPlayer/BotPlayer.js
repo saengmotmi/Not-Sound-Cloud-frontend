@@ -85,6 +85,7 @@ const BotPlayer = styled.div`
   height: 48px;
   transition: bottom 1s;
   background-color: #f2f2f2;
+  z-index: 100;
 
   border-top: 1px solid #cecece;
 
