@@ -19,6 +19,17 @@ const BottomPlayer = (props) => {
     duration
   } = props;
 
+  const convertTime = (time) => {
+    let timeMinute = Math.ceil(time / 60);
+    let timeSecond = (time % 60).toFixed(0);
+
+    if (timeSecond < 10) {
+      timeSecond = "0" + timeSecond;
+    }
+
+    return `${timeMinute}:${timeSecond}`
+  }
+
   return (
     <BotPlayer className={navUp}>
       <PlayButtonWrapper isPause={isPause} isPlaying={isPlaying}>
@@ -37,14 +48,14 @@ const BottomPlayer = (props) => {
       </PlayButtonWrapper>
       <ProgressContainer>
         <div className="time-count">
-          <span>{currentTime ? duration - currentTime : "0:00"}</span>
+          <span>{currentTime ? convertTime(duration - currentTime) : "0:00"}</span>
         </div>
         <ProgressWrapper>
           <ProgressDiv></ProgressDiv>
           <ProgressDiv offsetX=""></ProgressDiv>
         </ProgressWrapper>
         <div className="time-count">
-          <span>{duration ? duration : "0:00"}</span>
+          <span>{duration ? convertTime(duration) : "0:00"}</span>
         </div>
       </ProgressContainer>
       <button className="btn-volume" type="button" />
@@ -55,7 +66,7 @@ const BottomPlayer = (props) => {
             <span id="artist">아티스트</span>
           </div>
           <div>
-            <span>{currentMusicNum ? currentMusicNum : "없음"}</span>
+            <span>{currentMusicNum ? "곡 제목" : "없음"}</span>
           </div>
         </div>
       </SongInfo>
@@ -94,7 +105,6 @@ const BotPlayer = styled.div`
   }
 
   .btn-volume {
-
     border: none;
     outline: none;
     width: 24px;
@@ -106,7 +116,6 @@ const BotPlayer = styled.div`
 `;
 
 const PlayButtonWrapper = styled.div`
-
   button {
     border: none;
     outline: none;

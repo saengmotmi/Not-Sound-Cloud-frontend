@@ -7,8 +7,6 @@ import store from '../redux/store'
 import theme from '../global/theme';
 import Layout from '../components/layout/Layout';
 import Stream from '../pages/stream'
-import { checkNoti, checkMessage } from "../redux/header/headerActions";
-
 
 
 const Home = () => {
@@ -36,7 +34,6 @@ return (
   </Provider>
 );
 }
-
 
 const GlobalStyle = createGlobalStyle`
   font-family: ${theme.fontGlobal};

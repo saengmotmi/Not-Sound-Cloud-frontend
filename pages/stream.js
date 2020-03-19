@@ -1,62 +1,212 @@
 import React, { useState, useRef, useEffect } from "react";
-import styled, { css } from "styled-components";
-import VisualizerComp from '../components/VisualizerComp';
+import styled, {
+  createGlobalStyle,
+  ThemeProvider,
+  css
+} from "styled-components";
+import VisualizerCompStream from '../components/VisualizerCompStream';
 import MusicStreaming from "./MusicStreaming";
 import Layout from "../components/layout/Layout";
 import theme from "../global/theme";
 import BottomPlayer from "../components/bottomPlayer/BotPlayer";
+import store from "../redux/store";
+import { Provider, connect } from "react-redux";
+import reset from "styled-reset";
 
+// const song = {
+//   repost_id: "바다코끼리",
+//   repost_img_src:
+//     "https://i1.sndcdn.com/avatars-LFRcPhK9aBrPrGQV-O60JGw-t50x50.jpg",
+//   repost_time: 4, //reposted a track 4 hours ago
+//   post_id: "Ziiin",
+//   song_name: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
+//   small_img_url:
+//     "https://i1.sndcdn.com/artworks-bPFTZjehyPP0iCdP-FzXVUQ-t200x200.jpg",
+//   tag: "# Hip-hop & Rap",
+//   my_img_src: "https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg",
+//   play_count: 4706, // toLocaleString
+//   comment_count: 4,
+//   song_path: "2.mp3"
+// };
 
-const song = {
-  repost_id: "바다코끼리",
-  repost_img_src:
-    "https://i1.sndcdn.com/avatars-LFRcPhK9aBrPrGQV-O60JGw-t50x50.jpg",
-  repost_time: 4, //reposted a track 4 hours ago
-  post_id: "Ziiin",
-  song_name: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
-  small_img_url:
-    "https://i1.sndcdn.com/artworks-bPFTZjehyPP0iCdP-FzXVUQ-t200x200.jpg",
-  tag: "# Hip-hop & Rap",
-  my_img_src: "https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg",
-  play_count: 4706, // toLocaleString
-  comment_count: 4,
-  song_path: "2.mp3"
-};
-
-const datatest = [1,2,3]
-
-const vctest = datatest.map(param => (
-  <div key={param}>
-    <VisualizerComp play={param} {...song}></VisualizerComp>
-  </div>
-));
-
+const datatest = [1,2,3,4,5]
 
 const Stream = () => {
+  const [musicData, setMusicData] = useState(null);
+  const [music, setMusic] = useState(null); //음원 자체, true가 되면 음원이 준비 됨
+  const [buffer, setBuffer] = useState(""); // duration을 얻기 위함
+  const [duration, setDuration] = useState(0); // 특정 시점의 전체 길이
+  const [currentTime, setCurrentTime] = useState(0); // 전체 길이 - 지금 전체 길이
+  const [context, setContext] = useState(null); // 일시정지에 사용
+  const [isPlaying, setIsPlaying] = useState(false); // 재생 중 여부
+  const [isPause, setIsPause] = useState(false); // 일시 정지 여부
+  const [musicNum, setMusicNum] = useState(1); // 입력된 song_id
+  const [currentMusicNum, setCurrentMusicNum] = useState("1"); // 재생, 파형 클릭 시점의 song_id
   const [navUp, setNavUp] = useState(""); // 하단 바 애니메이션
 
   useEffect(() => {
     setNavUp("botPlayer up"); // 하단바 올라오는 거
   }, []);
 
+  useEffect(() => {
+    getMusicInfoApi();
+  }, []);
+
+  useEffect(() => {
+    //buffer updated
+    if (musicNum === currentMusicNum) {
+      setCurrentTime(buffer.duration); //same musicNum
+    } else if (musicNum !== currentMusicNum) {
+      setDuration(buffer.duration); //diff musicNum
+    }
+  }, [buffer]);
+
+  // 스트리밍 버튼
+  const getMusicApi = async startSec => {
+    // load audio file from server
+    if (isPlaying) {
+      await musicStop(); // 만약 재생 중이면 일단 정지
+      console.log("stop");
+    }
+    console.log(startSec + "를 요청합니다");
+    await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
+      .then(res => res.arrayBuffer())
+      .then(res => musicPlay(res));
+
+    await getMusicInfoApi();
+  };
+
+  const getMusicInfoApi = () => {
+    fetch(`http://10.58.3.91:8000/song/play/${musicNum}`)
+      .then(res => res.json())
+      .then(res => setMusicData(res.song[0]));
+  };
+
+  // play 버튼
+  const musicPlay = async res => {
+    console.log(res);
+
+    // create audio context
+    const getAudioContext = () => {
+      AudioContext = window.AudioContext || window.webkitAudioContext;
+      const audioContent = new AudioContext();
+      return audioContent;
+    };
+
+    const audioContext = getAudioContext();
+    // create audioBuffer (decode audio file)
+    const audioBuffer = await audioContext.decodeAudioData(res);
+    // create audio source
+    const source = audioContext.createBufferSource();
+
+    source.buffer = audioBuffer;
+    source.connect(audioContext.destination);
+    setMusic(source);
+    setBuffer(audioBuffer);
+    setContext(audioContext);
+    setCurrentMusicNum(musicNum); // 현재 재생 중인 song_id
+    console.log("ready to play");
+
+    source.start();
+    setIsPlaying(true); // 플레이 시작
+    console.log("start");
+  };
+
+  // stop 버튼
+  const musicStop = async () => {
+    music.stop();
+    setIsPlaying(false);
+  };
+
+  // pause 버튼
+  const musicPause = async () => {
+    if (isPlaying && isPause) {
+      // true true
+      console.log(isPlaying, isPause);
+      context.resume();
+    } else if (isPlaying && !isPause) {
+      // true false
+      console.log(isPlaying, isPause);
+      context.suspend();
+    }
+
+    // setIsPlaying(!isPlaying);
+    setIsPause(!isPause);
+    console.log("pause");
+  };
+
+  // visualizer에 props로 주는 함수
+  const showOffsetX = offsetX => {
+    console.log(offsetX);
+
+    if (isPlaying) {
+      getMusicApi(Math.round((offsetX / 640) * duration)); // 퍼센트 x 전체 길이
+      console.log(Math.round((offsetX / 640) * duration) + "초 재생 요청");
+    } else {
+      getMusicApi(0);
+    }
+  };
+
+  const vctest = datatest.map(param => (
+    <div key={param}>
+      <VisualizerCompStream
+        musicData={musicData}
+        isPlaying={isPlaying}
+        isPause={isPause}
+        getMusicApi={getMusicApi}
+        showOffsetX={showOffsetX}
+        buffer={buffer}
+        interval={duration ? 640 / duration : 1}
+        currentMusicNum={currentMusicNum}
+        play={param}
+        // {...song}
+      ></VisualizerCompStream>
+    </div>
+  ));
+
   return (
     <>
-      <Layout>
-        <StreamContainer>
-          <StreamLeft>
-            왼쪽
-            <p className="top-msg">
-              Hear the latest posts from the people you’re following:
-            </p>
-            {vctest}
-          </StreamLeft>
-          <StreamRight>오른쪽</StreamRight>
-        </StreamContainer>
-        <BottomPlayer navUp={navUp} />
-      </Layout>
+      <Provider store={store}>
+        <GlobalStyle />
+        <ThemeProvider theme={theme}>
+          <Layout>
+            <StreamContainer>
+              <StreamLeft>
+                왼쪽
+                <p className="top-msg">
+                  Hear the latest posts from the people you’re following:
+                </p>
+                {vctest}
+              </StreamLeft>
+              <StreamRight>오른쪽</StreamRight>
+            </StreamContainer>
+            <BottomPlayer
+              isPlaying={isPlaying}
+              isPause={isPause}
+              musicPause={musicPause}
+              getMusicApi={getMusicApi}
+              musicStop={musicStop}
+              buffer={buffer}
+              musicNum={musicNum}
+              currentMusicNum={currentMusicNum}
+              currentTime={currentTime}
+              duration={duration}
+              interval={duration ? 640 / duration : 1}
+              navUp={navUp}
+            />
+          </Layout>
+        </ThemeProvider>
+      </Provider>
     </>
   );
-}
+};
+
+
+const GlobalStyle = createGlobalStyle`
+  font-family: ${theme.fontGlobal};
+  ${reset};
+`;
+
 
 export default Stream;
 
