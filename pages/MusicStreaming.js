@@ -1,22 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import Visualizer from "../pages/Visualizer";
 import VisualizerComp from "../components/VisualizerComp";
 import BottomPlayer from "../components/bottomPlayer/BotPlayer";
 
 const MusicStreaming = () => {
-  const [readyMusic, setReadyMusic] = useState(null);
-  const [music, setMusic] = useState(null);
-  const [buffer, setBuffer] = useState("");
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [context, setContext] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isPause, setIsPause] = useState(false);
-  const [musicNum, setMusicNum] = useState(1);
-  const [currentMusicNum, setCurrentMusicNum] = useState("1");
-  const [navUp, setNavUp] = useState("");
-  const [childOffsetX, setChildOffsetX] = useState(1);
+  const [music, setMusic] = useState(null); //음원 자체, true가 되면 음원이 준비 됨
+  const [buffer, setBuffer] = useState(""); // duration을 얻기 위함
+  const [duration, setDuration] = useState(0); // 특정 시점의 전체 길이
+  const [currentTime, setCurrentTime] = useState(0); // 전체 길이 - 지금 전체 길이
+  const [context, setContext] = useState(null); // 일시정지에 사용
+  const [isPlaying, setIsPlaying] = useState(false); // 재생 중 여부
+  const [isPause, setIsPause] = useState(false); // 일시 정지 여부
+  const [musicNum, setMusicNum] = useState(1); // 입력된 song_id
+  const [currentMusicNum, setCurrentMusicNum] = useState("1"); // 재생, 파형 클릭 시점의 song_id
+  const [navUp, setNavUp] = useState(""); // 하단 바 애니메이션
 
   useEffect(() => {
     setNavUp("botPlayer up"); // 하단바 올라오는 거
@@ -29,10 +26,10 @@ const MusicStreaming = () => {
     } else if (musicNum !== currentMusicNum) {
       setDuration(buffer.duration); //diff musicNum
     }
-  }, [buffer])
+  }, [buffer]);
 
   // 스트리밍 버튼
-  const getMusicApi = async (startSec) => {
+  const getMusicApi = async startSec => {
     // load audio file from server
     if (isPlaying) {
       await musicStop(); // 만약 재생 중이면 일단 정지
@@ -42,7 +39,7 @@ const MusicStreaming = () => {
     await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
       .then(res => res.arrayBuffer())
       .then(res => musicPlay(res));
-  }
+  };
 
   const getAudioContext = () => {
     AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -50,24 +47,19 @@ const MusicStreaming = () => {
     return audioContent;
   };
 
-    // setTimeout(() => {
-    //   source.stop();
-    //   console.log("stop");
-    // }, 17000);
+  // const startedAt = Date.now();
+  // const duration = source.buffer.duration;
 
-    // const startedAt = Date.now();
-    // const duration = source.buffer.duration;
+  // setInterval(() => {
+  //   const playbackTime = (Date.now() - startedAt) / 1000;
+  //   const rate = (playbackTime * 100) / duration;
+  //   console.log(rate, playbackTime, duration);
+  // }, 1000);
 
-    // setInterval(() => {
-    //   const playbackTime = (Date.now() - startedAt) / 1000;
-    //   const rate = (playbackTime * 100) / duration;
-    //   console.log(rate, playbackTime, duration);
-    // }, 1000);
-    
   // play 버튼
-  const musicPlay = async (res) => {
+  const musicPlay = async res => {
     console.log(res);
-        // create audio context
+    // create audio context
     const audioContext = getAudioContext();
     // create audioBuffer (decode audio file)
     const audioBuffer = await audioContext.decodeAudioData(res);
@@ -76,7 +68,6 @@ const MusicStreaming = () => {
 
     source.buffer = audioBuffer;
     source.connect(audioContext.destination);
-    setReadyMusic(audioContext.destination);
     setMusic(source);
     setBuffer(audioBuffer);
     setContext(audioContext);
@@ -86,7 +77,7 @@ const MusicStreaming = () => {
     source.start();
     setIsPlaying(true);
     console.log("start");
-  }
+  };
 
   // stop 버튼
   const musicStop = async () => {
@@ -96,23 +87,23 @@ const MusicStreaming = () => {
 
   // pause 버튼
   const musicPause = async () => {
-    if (isPlaying === true && isPause === true) {
+    if (isPlaying && isPause) {
+      // true true
       console.log(isPlaying, isPause);
       context.resume();
-    } else if (isPlaying === true && isPause === false) {
+    } else if (isPlaying && !isPause) {
+      // true false
       console.log(isPlaying, isPause);
       context.suspend();
     }
-    
+
     // setIsPlaying(!isPlaying);
     setIsPause(!isPause);
     console.log("pause");
-    
-  }
+  };
 
   // visualizer에 props로 주는 함수
   const showOffsetX = offsetX => {
-    setChildOffsetX(offsetX);
     console.log(offsetX);
 
     if (isPlaying) {
@@ -121,30 +112,20 @@ const MusicStreaming = () => {
     } else {
       getMusicApi(0);
     }
-  }
+  };
 
   return (
     <>
       <VisualizerComp
         isPlaying={isPlaying}
+        isPause={isPause}
         getMusicApi={getMusicApi}
         showOffsetX={showOffsetX}
         buffer={buffer}
         interval={duration ? 640 / duration : 1}
+        currentMusicNum={currentMusicNum}
       ></VisualizerComp>
-      {/* <button onClick={() => getMusicApi(childOffsetX)} type="button">
-        초기화
-      </button> */}
-      {/* <div>duration {buffer && buffer.duration}</div> */}
-      {/* <div>
-        childOffsetX{" "}
-        {childOffsetX &&
-          childOffsetX +
-            " " +
-            (childOffsetX / 640) * 100 + "%" +
-            " " +
-            parseInt((childOffsetX / 640) * buffer.duration)}{" "}
-      </div> */}
+
       <input type="text" onChange={event => setMusicNum(event.target.value)} />
 
       <BottomPlayer
@@ -163,7 +144,7 @@ const MusicStreaming = () => {
       ></BottomPlayer>
     </>
   );
-}
+};
 
 export default MusicStreaming;
 

@@ -17,26 +17,31 @@ const VisualizerComp = (props) => {
     play_count,
     song_path,
     comment_count,
-    interval
+    interval,
+    isPlaying,
+    isPause,
+    currentMusicNum
   } = props;
+
+  const nowPlayID = 1;
 
   const canvasRefTop = useRef(null);
   const canvasRefBot = useRef(null);
 
-  const [canvasWidth, setCanvasWidth] = useState(1100);
+  const [canvasWidth, setCanvasWidth] = useState(0);
   const [count, setCount] = useState(0);
   const [inputID, setInputID] = useState('');
   const [inputComment, setInputComment] = useState('');
   const [comdata, setComdata] = useState([
     {
-      id: '김민규',
-      comment: '좋아요',
-      offsetX: 100,
+      user_id: '김민규',
+      content: '좋아요',
+      position: 100,
     },
     {
-      id: '김광훈',
-      comment: '좋아요',
-      offsetX: 400,
+      user_id: '김광훈',
+      content: '좋아요',
+      position: 400,
     },
   ]);
 
@@ -47,15 +52,22 @@ const VisualizerComp = (props) => {
     dataUpscale.push(i.toFixed(3));
   }
 
+  
+
   // 음악 재생
-  // props.play === 1 && 
-    // useEffect(() => {
-    //   const id = setInterval(() => {
-    //     setCount(count + interval/5);
-    //     console.log("count", count, "interval", interval/5)
-    //   }, 200);
-    //   return () => clearInterval(id);
-    // }, [count, interval]);
+  useEffect(() => {
+    let wavePlay;
+
+    if (nowPlayID === currentMusicNum && isPlaying && !isPause) {
+      wavePlay = setInterval(() => {
+        setCount(count + interval / 5);
+        // console.log("count", count, "interval", interval / 5);
+      }, 200);
+    } else if (isPause) {
+      clearInterval(wavePlay);
+    }
+    return () => {clearInterval(wavePlay);}; // count는 초기화 되지 않음
+  }, [count, isPlaying, isPause]);
   
   // 파형 그리기
   useEffect(() => {
@@ -78,7 +90,7 @@ const VisualizerComp = (props) => {
   }, []);
 
   // 댓글 그리기
-  const commentArr = comdata.map((param, idx) => <VisualComment key={idx} id={param.id} comment={param.comment} offsetX={param.offsetX} src="" />);
+  const commentArr = comdata.map((param, idx) => <VisualComment key={idx} user_id={param.user_id} content={param.content} position={param.position} src="" />);
 
   // 댓글 추가 state 갱신
   const typeComment = (e, isInput) => {
@@ -87,11 +99,13 @@ const VisualizerComp = (props) => {
 
   // 댓글 추가
   const addComment = (e) => {
-    const tempData = [...comdata];
-    tempData.push({ id: inputID, comment: inputComment, offsetX: count });
-    setComdata(tempData);
-    setInputID("");
-    setInputComment("");
+    if (e.keyCode === 13) {
+      const tempData = [...comdata];
+      tempData.push({ user_id: "오종", content: inputComment, position: count });
+      setComdata(tempData);
+      setInputID("");
+      setInputComment("");
+    }
   };
 
   const onCanvasMove = (e) => {
@@ -171,8 +185,8 @@ const VisualizerComp = (props) => {
           </CanvasContainer>
           <CommentContainer>
             <img src={my_img_src} />
-            <input onChange={event => typeComment(event, "id")} type="text" />
-            <input
+            <input value={inputID} onChange={event => typeComment(event, "id")} type="text" />
+            <input value={inputComment}
               placeholder="Write a comment"
               onChange={event => typeComment(event, "comment")}
               onKeyDown={(event) => addComment(event)}

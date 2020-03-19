@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
+import theme from "../../global/theme";
 
 
 const BottomPlayer = (props) => {
@@ -35,29 +36,33 @@ const BottomPlayer = (props) => {
         {/* <button onClick={musicStop} type="button" /> */}
       </PlayButtonWrapper>
       <ProgressContainer>
-        <div>현재 위치 : {currentTime ? duration - currentTime : "0:00"}</div>
+        <div className="time-count">
+          <span>{currentTime ? duration - currentTime : "0:00"}</span>
+        </div>
         <ProgressWrapper>
           <ProgressDiv></ProgressDiv>
           <ProgressDiv offsetX=""></ProgressDiv>
         </ProgressWrapper>
-        <SongInfo>
-          <div>전체 길이 : {duration ? duration : "0:00"}</div>
-        </SongInfo>
+        <div className="time-count">
+          <span>{duration ? duration : "0:00"}</span>
+        </div>
       </ProgressContainer>
       <button className="btn-volume" type="button" />
-      <div>
-        <div>이미지</div>
+      <SongInfo>
+        <img src="" alt="" />
         <div>
-          <div>아티스트</div>
           <div>
-            재생 중인 음악 : {currentMusicNum ? currentMusicNum : "없음"}
+            <span id="artist">아티스트</span>
+          </div>
+          <div>
+            <span>{currentMusicNum ? currentMusicNum : "없음"}</span>
           </div>
         </div>
-      </div>
-      <div>
-        <button type="button">하트</button>
-        <button type="button">플레이리스트</button>
-      </div>
+      </SongInfo>
+      <RightDiv>
+        <button type="button" />
+        <button type="button" />
+      </RightDiv>
     </BotPlayer>
   );
 
@@ -67,6 +72,7 @@ export default BottomPlayer;
 
 
 const BotPlayer = styled.div`
+  margin: 0 auto;
   position: fixed;
   display: flex;
   flex-direction: row;
@@ -80,22 +86,26 @@ const BotPlayer = styled.div`
   transition: bottom 1s;
   background-color: #f2f2f2;
 
+  border-top: 1px solid #cecece;
+
   &.up {
     bottom: 0;
   }
 
   .btn-volume {
+
     border: none;
     outline: none;
     width: 24px;
     height: 48px;
     margin-left: 12px;
-    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTQgOWg0LjAwMkwxMiA1djE0Yy0yLjQ0Ni0yLjY2Ny0zLjc3OC00LTMuOTk4LTRINFY5em0xMCA0YTEgMSAwIDAgMCAwLTJWOWEzIDMgMCAwIDEgMCA2di0yem0wIDRhNSA1IDAgMCAwIDAtMTBWNWE3IDcgMCAwIDEgMCAxNHYtMnoiLz48L3N2Zz4K") no-repeat 55%;
+    background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+PHBhdGggZmlsbD0iIzMzMyIgZD0iTTQgOWg0LjAwMkwxMiA1djE0Yy0yLjQ0Ni0yLjY2Ny0zLjc3OC00LTMuOTk4LTRINFY5em0xMCA0YTEgMSAwIDAgMCAwLTJWOWEzIDMgMCAwIDEgMCA2di0yem0wIDRhNSA1IDAgMCAwIDAtMTBWNWE3IDcgMCAwIDEgMCAxNHYtMnoiLz48L3N2Zz4K")
+      no-repeat 55%;
   }
 `;
 
-
 const PlayButtonWrapper = styled.div`
+
   button {
     border: none;
     outline: none;
@@ -162,9 +172,9 @@ const ProgressDiv = styled.div`
   width: 472px;
   height: 1px;
   background-color: #ccc;
-  margin: 13px 20px 0 0;
   /* padding: 10px 0; */
   position: absolute;
+  top: 23px;
 
   ${props => {
     props.offsetX &&
@@ -175,16 +185,87 @@ const ProgressDiv = styled.div`
 `;
 
 const ProgressWrapper = styled.div`
+  position: relative;
+  width: 472px;
+  height: 48px;
 
-`
+  display: flex;
+  align-items: center;
+
+  /* height: 13px;
+  margin: 13px 10px 0 10px; */
+`;
 
 const ProgressContainer = styled.div`
-  position: relative;
   display: flex;
+  align-items: center;
   width: 592px;
   height: 48px;
+
+  .time-count {
+    font-size: 11px;
+    margin: 0 10px;
+
+    &:nth-child(1) {
+      color: ${theme.orange};
+      margin-left: 40px;
+    }
+  }
+
+  
+`;
+
+const RightDiv = styled.div`
+  button {
+    border: none;
+    outline: none;
+
+    width: 24px;
+    height: 48px;
+
+    &:nth-child(1) {
+      background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8c3ZnIHdpZHRoPSIxNnB4IiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAgMCAxNiAxNiIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxuczpza2V0Y2g9Imh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaC9ucyI+DQogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCAzLjAuMyAoNzg5MSkgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+DQogICAgPHRpdGxlPnN0YXRzX2xpa2VzX2dyZXk8L3RpdGxlPg0KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPg0KICAgIDxkZWZzLz4NCiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4NCiAgICAgICAgPHBhdGggZD0iTTEwLjgwNDk4MTgsMyBDOC43ODQ3MTU3OSwzIDguMDAwNjUyODUsNS4zNDQ4NjQ4NiA4LjAwMDY1Mjg1LDUuMzQ0ODY0ODYgQzguMDAwNjUyODUsNS4zNDQ4NjQ4NiA3LjIxMjk2Mzg3LDMgNS4xOTYwNDQ5NCwzIEMzLjQ5NDMxMzE4LDMgMS43NDgzNzQsNC4wOTU5MjY5NCAyLjAzMDA4OTk2LDYuNTE0MzA1MzIgQzIuMzczNzI3NjUsOS40NjY3Mzc3NSA3Ljc1NDkxOTE3LDEyLjk5Mjg3MzggNy45OTMxMDk1OCwxMy4wMDEwNTU3IEM4LjIzMTI5OTk4LDEzLjAwOTIzNzggMTMuNzMwOTgyOCw5LjI3ODUzNzggMTMuOTgxNDU5LDYuNTAxMjQwNSBDMTQuMTg3ODY0Nyw0LjIwMDk3MDIzIDEyLjUwNjcxMzYsMyAxMC44MDQ5ODE4LDMgWiIgaWQ9IkltcG9ydGVkLUxheWVycyIgZmlsbD0icmdiKDI1NSwgODUsIDApIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIi8+DQogICAgPC9nPg0KPC9zdmc+DQo=")
+        no-repeat 55%;
+    }
+    &:nth-child(2) {
+      background: url("https://www.pngfind.com/pngs/m/294-2942312_soundcloud-icon-source-playlist-white-icon-transparent-hd.png")
+        no-repeat 55%;
+      background-size: 15px 15px;
+    }
+  }
 `;
 
 const SongInfo = styled.div`
-  font-size: 8px;
-`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  width: 296px;
+
+  font-size: 11px;
+  line-height: 17px;
+
+  img {
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid black;
+
+    margin: 0 10px 0 20px;
+  }
+
+  span {
+    text-align: left;
+
+    &#artist {
+      color: #999;
+    }
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+`;
+
+
