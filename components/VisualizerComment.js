@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import theme from '../global/theme';
 
 // visualizerComp에 병합 예정
 const VisualComment = (props) => {
@@ -24,7 +23,7 @@ export default VisualComment;
 
 const CommentDiv = styled.div`
   position: absolute;
-  top: 100px;
+  top: 80px;
   left: ${(props) => props.offset}px;
 `;
 
