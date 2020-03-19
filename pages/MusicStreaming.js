@@ -1,24 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import theme from "../global/theme";
-import VisualizerComp from "../components/VisualizerComp";
 import Visualizer from "../pages/Visualizer";
 
 const MusicStreaming = () => {
-  const [resMusic, setResMusic] = useState(null);
   const [readyMusic, setReadyMusic] = useState(null);
   const [music, setMusic] = useState(null);
   const [buffer, setBuffer] = useState(null);
   const [context, setContext] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startedAt, setStartedAt] = useState(null);
-  const [musicNum, setMusicNum] = useState("1/1");
+  const [musicNum, setMusicNum] = useState("1");
   const [navUp, setNavUp] = useState(null);
   const [childOffsetX, setChildOffsetX] = useState(1);
-
-  // useEffect(() => {
-  //   getMusicApi();
-  // },[music]);
 
   useEffect(() => {
     setNavUp("up"); // 하단바 올라오는 거
@@ -26,23 +19,15 @@ const MusicStreaming = () => {
 
   // 스트리밍 버튼
   const getMusicApi = async (startSec) => {
-
     // load audio file from server
-    // const res = await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}`)
     if (isPlaying) {
-      await musicStop();
+      await musicStop(); // 만약 재생 중이면 일단 정지
+      console.log("stop");
     }
 
-    console.log("isPlaying", isPlaying, "startSec", startSec, "buffer", buffer);
-
-    await fetch(`http://10.58.3.91:8000/song/playview/1/${startSec}`)
+    await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
       .then(res => res.arrayBuffer())
       .then(res => musicPlay(res));
-      // .then(res => setResMusic(res))
-      // .then(res => console.log("then", res));
-
-    // await console.log("outside", resMusic);
-    // await musicPlay();
   }
 
   const getAudioContext = () => {
@@ -105,15 +90,20 @@ const MusicStreaming = () => {
   const showOffsetX = offsetX => {
     setChildOffsetX(offsetX);
     console.log(offsetX);
-    getMusicApi(parseInt((offsetX / 640) * buffer.duration));
+
+    if (isPlaying) {
+      getMusicApi(parseInt((offsetX / 640) * buffer.duration));
+    } else {
+      getMusicApi(0);
+    }
   }
 
   return (
     <>
-      <Visualizer offsetX={showOffsetX}></Visualizer>
-      <button onClick={() => getMusicApi(childOffsetX)} type="button">
+      <Visualizer isPlaying={isPlaying} getMusicApi={getMusicApi} offsetX={showOffsetX}></Visualizer>
+      {/* <button onClick={() => getMusicApi(childOffsetX)} type="button">
         초기화
-      </button>
+      </button> */}
       {/* <div>duration {buffer && buffer.duration}</div> */}
       <div>startedAt {startedAt} </div>
       <div>rate </div>

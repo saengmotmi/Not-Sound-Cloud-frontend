@@ -15,20 +15,19 @@ const Login = (props) => {
   const googleLoginBtn = useRef(null);
 
   useEffect(() => {
-    googleSDK();
+    // googleSDK();
   },[]);
 
   const googleSDK = () => {
     // 구글 SDK 초기 설정
     window.googleSDKLoaded = () => {
-      console.log(window.gapi);
       window.gapi.load('auth2', () => {
-        const auth2 = window.gapi.auth2.getAuthInstance({
+        const auth2 = window.gapi.auth2.init({
           client_id:
-            "672184265213-5hgk5b6461782ct1ath3be78atbjsnk2.apps.googleusercontent.com",
+            "341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com",
           scope: "profile email"
         });
-        console.log(googleLoginBtn, auth2);
+        console.log(googleLoginBtn, auth2.current);
         auth2.attachClickHandler(
           googleLoginBtn.current, // useRef랑 current!!!!!
           {},
@@ -110,7 +109,7 @@ const Login = (props) => {
         />
         <meta
           name="google-signin-client_id"
-          content="672184265213-5hgk5b6461782ct1ath3be78atbjsnk2.apps.googleusercontent.com"
+          content="341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com"
         />
       </Head>
       <button type="button" onClick={signOut}>

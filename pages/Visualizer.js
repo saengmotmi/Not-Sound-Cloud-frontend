@@ -95,9 +95,17 @@ const Visualizer = (props) => {
         // console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY); // react는 e.navtive.offsetX, Y로
         console.log(`${Math.ceil(e.nativeEvent.offsetX / 640 * 100)}%`);
 
-        setCanvasWidth(e.nativeEvent.offsetX);
-        setCount(e.nativeEvent.offsetX);
-        props.offsetX(e.nativeEvent.offsetX);
+        if (props.isPlaying) {
+          setCanvasWidth(e.nativeEvent.offsetX);
+          setCount(e.nativeEvent.offsetX);
+          props.offsetX(e.nativeEvent.offsetX);
+        } else {
+          setCanvasWidth(0);
+          setCount(0);
+          props.offsetX(0);
+        }
+
+        
       } else if (pos === 'bot') {
         console.log('bot'); // 댓글을 어떻게든 해야지
       }
