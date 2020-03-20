@@ -23,7 +23,7 @@ const Login = (props) => {
     window.googleSDKLoaded = () => {
       console.log(window.gapi);
       window.gapi.load('auth2', () => {
-        const auth2 = window.gapi.auth2.getAuthInstance({
+        const auth2 = window.gapi.auth2.init({
           client_id:
             "672184265213-5hgk5b6461782ct1ath3be78atbjsnk2.apps.googleusercontent.com",
           scope: "profile email"
