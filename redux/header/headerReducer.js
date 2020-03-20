@@ -18,7 +18,7 @@ const initState = {
   // userData:{}
   userData: {
     user_id: 117,
-    user_name: "heechul",
+    user_name: "",
     user_image:
       "https://image.bugsm.co.kr/album/images/50/203046/20304638.jpg?version=20200208002354.0"
   }

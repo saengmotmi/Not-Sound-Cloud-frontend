@@ -77,9 +77,9 @@ const RightBox = (props) => {
           });
           // console.log(response,'????');
           const result = await response.json();
-          // console.log(result.data);
-          // console.log(result.data["user_name"]);
-          // console.log(result.data["user_image"]);
+          console.log(result.data);
+          console.log(result.data["user_name"]);
+          console.log(result.data["user_image"]);
           //! 여기 유저정포 스테이트에 저장하기로 변경
           return saveUserData(result.data);
     }
@@ -94,7 +94,7 @@ const RightBox = (props) => {
         }
       );
       const result = await response.json();
-      // console.log(result.data);
+      console.log(result.data,'불켜질꺼야');
       checkMessage(result.data["message_checked"]);
       checkNoti(result.data["follow_checked"]);
     };

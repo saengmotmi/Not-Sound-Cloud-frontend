@@ -25,7 +25,7 @@ const Login = (props) => {
       window.gapi.load('auth2', () => {
         const auth2 = window.gapi.auth2.init({
           client_id:
-            "672184265213-5hgk5b6461782ct1ath3be78atbjsnk2.apps.googleusercontent.com",
+            "341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com",
           scope: "profile email"
         });
         console.log(googleLoginBtn, auth2);
@@ -88,7 +88,7 @@ const Login = (props) => {
     console.log(typeof token, token)
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    fetch("http://10.58.1.163:8000/user/sign-up/google", {
+    fetch("http://10.58.3.91:8000/user/sign-up/google", {
       method: "POST",
       // body: {id_token: JSON.stringify(token)},
       // body: JSON.stringify(token),
@@ -110,7 +110,7 @@ const Login = (props) => {
         />
         <meta
           name="google-signin-client_id"
-          content="672184265213-5hgk5b6461782ct1ath3be78atbjsnk2.apps.googleusercontent.com"
+          content="341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com"
         />
       </Head>
       <button type="button" onClick={signOut}>
@@ -208,6 +208,7 @@ const GoogleLogin = styled.div`
 `;
 
 const LoginContainer = styled.div`
+z-index:9999999;
   width: 100%;
   height: 100vh;
   display: ${props => (props.modal[1] ? "none" : "flex")};
