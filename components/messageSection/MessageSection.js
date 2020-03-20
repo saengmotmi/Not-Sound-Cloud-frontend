@@ -205,7 +205,7 @@ const BtnWrap = styled.div`
 `;
 
 const MsgInputWrap = styled.div`
-  }
+margin-bottom : 200px;
 `;
 const Textarea = styled.textarea`
   padding: 15px;
@@ -319,7 +319,7 @@ const MessagesWrap = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: ${theme.lsnow};
 `;
 

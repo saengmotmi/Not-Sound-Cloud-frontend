@@ -7,7 +7,7 @@ import store from '../redux/store'
 import theme from "../global/theme";
 import Layout from '../components/layout/Layout';
 import Stream from '../pages/stream'
-
+import Login from './../components/login'
 
 const Home = () => {
   return (
@@ -20,6 +20,7 @@ const Home = () => {
           </Head>
           <Layout>
             <Stream />
+            <Login></Login>
           </Layout>
         </div>
       </ThemeProvider>

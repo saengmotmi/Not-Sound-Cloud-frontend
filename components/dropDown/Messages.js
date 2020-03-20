@@ -227,7 +227,7 @@ const Button = styled.button`
 
 
 const mapStateToProps = (state) => ({
-  messageData: state.messageData
+  messageData: state.messageData,
 });
 
 export default connect(mapStateToProps, { saveMessageData,changeNav })(Messages);
