@@ -19,6 +19,13 @@ const BottomPlayer = (props) => {
     duration
   } = props;
 
+  const [isMouseIn, setIsMouseIn] = useState(false);
+
+  const toggleVolume = () => {
+    setIsMouseIn(!isMouseIn);
+    console.log(isMouseIn);
+  }
+
   const convertTime = (time) => {
     let timeMinute = Math.ceil(time / 60);
     let timeSecond = (time % 60).toFixed(0);
@@ -48,7 +55,9 @@ const BottomPlayer = (props) => {
       </PlayButtonWrapper>
       <ProgressContainer>
         <div className="time-count">
-          <span>{currentTime ? convertTime(duration - currentTime) : "0:00"}</span>
+          <span>
+            {currentTime ? convertTime(duration - currentTime) : "0:00"}
+          </span>
         </div>
         <ProgressWrapper>
           <ProgressDiv></ProgressDiv>
@@ -58,7 +67,10 @@ const BottomPlayer = (props) => {
           <span>{duration ? convertTime(duration) : "0:00"}</span>
         </div>
       </ProgressContainer>
-      <button className="btn-volume" type="button" />
+      <VolumeDiv>
+        <button onMouseEnter={toggleVolume} onMouseLeave={toggleVolume} className="btn-volume" type="button" />
+        <VolumePopup><div>막대기</div><div>점</div></VolumePopup>
+      </VolumeDiv>
       <SongInfo>
         <img src="" alt="" />
         <div>
@@ -278,4 +290,19 @@ const SongInfo = styled.div`
   }
 `;
 
+const VolumeDiv = styled.div`
+  position: relative;
+`
 
+
+const VolumePopup = styled.div`
+  width: 30px;
+  height: 118px;
+  border: 1px solid black;
+  position: absolute;
+
+  bottom: 30px;
+  left: 10px;
+
+  display: ${props => props.isMouseIn ? "inline-block" : none}
+`

@@ -93,9 +93,11 @@ const Stream = () => {
     // create audioBuffer (decode audio file)
     const audioBuffer = await audioContext.decodeAudioData(res);
     // create audio source
+    const audioGain = audioContext.createGain();
     const source = audioContext.createBufferSource();
 
     source.buffer = audioBuffer;
+    source.connect(audioGain); // source or music.gain.value = 볼륨값
     source.connect(audioContext.destination);
     
     
