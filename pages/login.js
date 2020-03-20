@@ -84,14 +84,12 @@ const Login = (props) => {
   };
 
   const GoogleApiPOST = (token) => {
-    console.log(typeof token, token)
+    console.log("타입", typeof token, token)
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    fetch("http://10.58.1.163:8000/user/sign-up/google", {
+    myHeaders.append("id_token", token);
+    fetch("http://10.58.3.31:8000/user/sign-up/google", {
       method: "POST",
-      // body: {id_token: JSON.stringify(token)},
-      // body: JSON.stringify(token),
-      body: JSON.stringify({"id_token": token}), //객체 형식으로 만들어주고 stringify를 해야 함
       headers: myHeaders
     })
       .then(res => res.json())

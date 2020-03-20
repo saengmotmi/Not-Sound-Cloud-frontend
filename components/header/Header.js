@@ -107,6 +107,7 @@ top:0;
 width:100%;
 ${flexCenter};
 flex-direction:column;
+z-index:99999;
 `;
 const HeaderBlackBar = styled.div`
 ${flexCenter};

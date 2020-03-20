@@ -245,7 +245,6 @@ const ProgressDiv = styled.div`
   position: absolute;
   top: 23px;
 
-  ${props => {console.log("오프셋", props.offsetX)}}
   ${props => {
     return props.offsetX
       ? css`

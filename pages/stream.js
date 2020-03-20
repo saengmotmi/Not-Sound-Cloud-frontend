@@ -32,6 +32,8 @@ const datatest = [26, 25, 24, 23, 22, 21]
 const Stream = () => {
   const [musicData, setMusicData] = useState(null);
   const [music, setMusic] = useState(null); //음원 자체, true가 되면 음원이 준비 됨
+  const [musicVolume, setMusicVolume] = useState(null); //음원 자체, true가 되면 음원이 준비 됨
+
   const [buffer, setBuffer] = useState(""); // duration을 얻기 위함
   const [duration, setDuration] = useState(0); // 특정 시점의 전체 길이
   const [currentTime, setCurrentTime] = useState(0); // 전체 길이 - 지금 전체 길이
@@ -91,7 +93,7 @@ const Stream = () => {
 
   const setVolume = (offsetY) => {
     console.log("child", offsetY);
-    // music.gain.value = 1.5;
+    musicVolume.gain.value = 1.5;
   }
 
   // play 버튼
@@ -114,6 +116,7 @@ const Stream = () => {
 
     source.buffer = audioBuffer;
     source.connect(audioGain); // source or music.gain.value = 볼륨값
+    ;
     source.connect(audioContext.destination);
     
     
@@ -127,6 +130,7 @@ const Stream = () => {
     
     setMusic(source);
     setBuffer(audioBuffer);
+    setMusicVolume(audioGain.connect(audioContext.destination));
     setContext(audioContext);
     // setCurrentTime(audioContext);
     setCurrentMusicNum(id); // 현재 재생 중인 song_id
