@@ -34,7 +34,6 @@ const { asideData, sectionData } = props;
   );
 }
 
-
 const GlobalStyle = createGlobalStyle`
   ${reset};
 `;
