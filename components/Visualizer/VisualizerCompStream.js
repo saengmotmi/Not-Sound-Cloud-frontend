@@ -22,6 +22,9 @@ const VisualizerComp = (props) => {
     isPlaying,
     isPause,
     currentMusicNum,
+    setMusicNum,
+    currentNowTime,
+    setCurrentNowTime,
     // musicData,
     play
   } = props;
@@ -62,7 +65,7 @@ const VisualizerComp = (props) => {
     await fetch(`http://10.58.3.91:8000/song/playview/${play}/${startSec}`)
       .then(res => res.arrayBuffer())
       // .then(res => props.musicPlay(res));
-    // await getMusicInfoApi(play);
+    await getMusicInfoApi(play);
   };
 
   const getMusicInfoApi = (play) => {
@@ -122,6 +125,7 @@ const VisualizerComp = (props) => {
     if (play === currentMusicNum && isPlaying && !isPause) {
       wavePlay = setInterval(() => {
         setCount(count + interval / 5);
+        // setCurrentNowTime(count + 0.2);
         // console.log("count", count, "interval", interval / 5);
       }, 200);
     } else if ( (play !== currentMusicNum) || isPause || count >= 640) {
@@ -135,6 +139,23 @@ const VisualizerComp = (props) => {
     }
     return () => {clearInterval(wavePlay);}; // count는 초기화 되지 않음
   }, [count, isPlaying, isPause]);
+
+  useEffect(() => {
+    let k;
+
+    if (play === currentMusicNum && isPlaying && !isPause) {
+      k = setInterval(() => {
+        setCurrentNowTime(currentNowTime + 1);
+        console.log(
+          "currentNowTime",
+          currentNowTime
+        );
+      }, 1000);
+    }
+    return () => {
+      clearInterval(k);
+    }; // count는 초기화 되지 않음
+  }, [currentNowTime, isPlaying, isPause]);
 
 
   // 댓글 그리기
@@ -169,6 +190,7 @@ const VisualizerComp = (props) => {
           setCanvasWidth(e.nativeEvent.offsetX);
           setCount(e.nativeEvent.offsetX);
           props.showOffsetX(play, e.nativeEvent.offsetX);
+          props.setMusicNum(play);
         } else {
           setCanvasWidth(0);
           setCount(0);

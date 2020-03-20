@@ -35,6 +35,8 @@ const Stream = () => {
   const [buffer, setBuffer] = useState(""); // duration을 얻기 위함
   const [duration, setDuration] = useState(0); // 특정 시점의 전체 길이
   const [currentTime, setCurrentTime] = useState(0); // 전체 길이 - 지금 전체 길이
+  const [currentNowTime, setCurrentNowTime] = useState(0); // 전체 길이 - 지금 전체 길이
+
   const [context, setContext] = useState(null); // 일시정지에 사용
   const [isPlaying, setIsPlaying] = useState(false); // 재생 중 여부
   const [isPause, setIsPause] = useState(false); // 일시 정지 여부
@@ -44,18 +46,26 @@ const Stream = () => {
 
   useEffect(() => {
     setNavUp("botPlayer up"); // 하단바 올라오는 거
-    // getMusicInfoApi(1, 0);
+    // getMusicApi(1, 0);
   }, []);
 
   // useEffect(() => {
-  //   //buffer updated
-  //   console.log("music, curruent", musicNum, currentMusicNum)
-  //   if (musicNum === currentMusicNum) {
-  //     setCurrentTime(buffer.duration); //same musicNum
-  //   } else if (musicNum !== currentMusicNum) {
-  //     setDuration(buffer.duration); //diff musicNum
-  //   }
-  // }, [buffer]);
+  //   console.log(currentNowTime)
+  //   const addCountNow = setInterval(() => {
+  //     setCurrentNowTime(duration - currentTime+1);
+  //   }, 1000);
+  //   return () => {setCurrentNowTime(0); clearInterval(addCountNow)}
+  // },[buffer, currentNowTime, duration, currentTime])
+
+  useEffect(() => {
+    //buffer updated
+    console.log("music, curruent", musicNum, currentMusicNum)
+    if (musicNum === currentMusicNum) {
+      setCurrentTime(buffer.duration); //same musicNum
+    } else if (musicNum !== currentMusicNum) {
+      setDuration(buffer.duration); //diff musicNum
+    }
+  }, [buffer]);
 
   // 스트리밍 버튼
   const getMusicApi = async (id, startSec) => {
@@ -69,14 +79,20 @@ const Stream = () => {
       .then(res => res.arrayBuffer())
       .then(res => musicPlay(id, res));
 
-    // await getMusicInfoApi();
+    await getMusicInfoApi();
   };
 
-  // const getMusicInfoApi = () => {
-  //   fetch(`http://10.58.3.91:8000/song/play/${musicNum}`)
-  //     .then(res => res.json())
-  //     .then(res => setMusicData(res.song[0]));
-  // };
+  const getMusicInfoApi = () => {
+    console.log(currentMusicNum)
+    fetch(`http://10.58.3.91:8000/song/play/${currentMusicNum}`)
+      .then(res => res.json())
+      .then(res => setMusicData(res.song[0]));
+  };
+
+  const setVolume = (offsetY) => {
+    console.log("child", offsetY);
+    // music.gain.value = 1.5;
+  }
 
   // play 버튼
   const musicPlay = async (id, res) => {
@@ -112,6 +128,7 @@ const Stream = () => {
     setMusic(source);
     setBuffer(audioBuffer);
     setContext(audioContext);
+    // setCurrentTime(audioContext);
     setCurrentMusicNum(id); // 현재 재생 중인 song_id
     console.log("ready to play");
 
@@ -123,6 +140,7 @@ const Stream = () => {
   // stop 버튼
   const musicStop = async () => {
     music.stop();
+    setCurrentNowTime(0);
     setIsPlaying(false);
   };
 
@@ -172,6 +190,9 @@ const Stream = () => {
         interval={duration ? 640 / duration : 1}
         currentMusicNum={currentMusicNum}
         play={param}
+        setMusicNum={setMusicNum}
+        currentNowTime={currentNowTime}
+        setCurrentNowTime={setCurrentNowTime}
         // {...song}
       ></VisualizerCompStream>
     </div>
@@ -206,6 +227,8 @@ const Stream = () => {
               duration={duration}
               interval={duration ? 640 / duration : 1}
               navUp={navUp}
+              setVolume={setVolume}
+              currentNowTime={currentNowTime}
             />
           </Layout>
         </ThemeProvider>
@@ -243,13 +266,11 @@ const StreamRight = styled.div`
 `;
 
 const StreamContainer = styled.div`
-  display: flex;
-  flex-direction: row;
   background-color: white;
   width: 1240px;
   margin: 0 auto;
   padding: 0 30px 0 30px;
-`
+`;
 
 const StreamBg = styled.div`
   background-color: #f2f2f2;

@@ -16,14 +16,34 @@ const BottomPlayer = (props) => {
     musicNum,
     currentMusicNum,
     currentTime,
-    duration
+    duration,
+    setVolume,
+    currentNowTime
   } = props;
 
   const [isMouseIn, setIsMouseIn] = useState(false);
+  const [isMouseInClass, setIsMouseInClass] = useState(null);
+  const [volumeOffset, setVolumeOffset] = useState(10);
 
   const toggleVolume = () => {
     setIsMouseIn(!isMouseIn);
-    console.log(isMouseIn);
+    isMouseIn
+      ? setIsMouseInClass(null)
+      : setIsMouseInClass("volume-show");
+    
+    console.log(isMouseIn, isMouseInClass);
+  }
+
+  const checkVolumeOffsetY = (e) => {
+    const offsetY = e.nativeEvent.offsetY;
+    console.log(offsetY);
+
+    if (offsetY < 100 && offsetY > 10) {
+      setVolumeOffset(e.nativeEvent.offsetY);
+
+      // 10~110
+      setVolume(e.nativeEvent.offsetY);
+    }
   }
 
   const convertTime = (time) => {
@@ -40,15 +60,29 @@ const BottomPlayer = (props) => {
   return (
     <BotPlayer className={navUp}>
       <PlayButtonWrapper isPause={isPause} isPlaying={isPlaying}>
-        <button className="btn-playprev" type="button" />
+        <button
+          onClick={() => {
+            musicStop();
+            getMusicApi(currentMusicNum - 1, 0);
+          }}
+          className="btn-playprev"
+          type="button"
+        />
         <button
           className="btn-play"
-          onClick={() => getMusicApi(0)}
+          onClick={() => {
+            musicStop();
+            getMusicApi(currentMusicNum, 0);
+          }}
           type="button"
         />
         <button className="btn-pause" onClick={musicPause} type="button" />
         <button className="btn-resume" onClick={musicPause} type="button" />
-        <button className="btn-playnext" type="button" />
+        <button
+          onClick={() => getMusicApi(currentMusicNum + 1, 0)}
+          className="btn-playnext"
+          type="button"
+        />
         <button className="btn-shuffle" type="button" />
         <button className="btn-repeat" type="button" />
         {/* <button onClick={musicStop} type="button" /> */}
@@ -56,20 +90,35 @@ const BottomPlayer = (props) => {
       <ProgressContainer>
         <div className="time-count">
           <span>
-            {currentTime ? convertTime(duration - currentTime) : "0:00"}
+            {duration
+              ? convertTime(duration - currentTime + currentNowTime)
+              : "0:00"}
+            {console.log(duration, currentTime, currentNowTime)}
           </span>
         </div>
         <ProgressWrapper>
           <ProgressDiv></ProgressDiv>
-          <ProgressDiv offsetX=""></ProgressDiv>
+          <ProgressDiv
+            offsetX={duration ? (duration - currentTime + currentNowTime)/ duration * 472 : 0}
+          ></ProgressDiv>
         </ProgressWrapper>
         <div className="time-count">
           <span>{duration ? convertTime(duration) : "0:00"}</span>
         </div>
       </ProgressContainer>
-      <VolumeDiv>
-        <button onMouseEnter={toggleVolume} onMouseLeave={toggleVolume} className="btn-volume" type="button" />
-        <VolumePopup><div>막대기</div><div>점</div></VolumePopup>
+      <VolumeDiv onMouseEnter={toggleVolume} onMouseLeave={toggleVolume}>
+        <button className="btn-volume" type="button" />
+        <VolumePopup isMouseIn={isMouseIn}>
+          <VolumeOverflow
+            volumeOffset={volumeOffset}
+            onClick={event => checkVolumeOffsetY(event)}
+            className={isMouseInClass}
+          >
+            <div></div>
+            <div></div>
+            <div></div>
+          </VolumeOverflow>
+        </VolumePopup>
       </VolumeDiv>
       <SongInfo>
         <img src="" alt="" />
@@ -102,7 +151,6 @@ const BotPlayer = styled.div`
   justify-content: center;
 
   bottom: -48px;
-  z-index: 1000;
   background-color: yellow;
   width: 100%;
   height: 48px;
@@ -191,18 +239,21 @@ const PlayButtonWrapper = styled.div`
 
 
 const ProgressDiv = styled.div`
-  width: 472px;
-  height: 1px;
+  height: 2px;
   background-color: #ccc;
   /* padding: 10px 0; */
   position: absolute;
   top: 23px;
 
+  ${props => {console.log("오프셋", props.offsetX)}}
   ${props => {
-    props.offsetX &&
-      css`
-        width: ${props.offsetX};
-      `;
+    return props.offsetX
+      ? css`
+          width: ${props.offsetX + "px"};
+          background-color: #f50;
+          z-index: 1000;
+        `
+      : css`width: 472px;`
   }}
 `;
 
@@ -297,12 +348,66 @@ const VolumeDiv = styled.div`
 
 const VolumePopup = styled.div`
   width: 30px;
+  height: 150px;
+
+  position: absolute;
+
+  bottom: 0px;
+  left: 10px;
+
+  display: ${props => props.isMouseIn ? "inline-block" : "none"}
+`
+
+
+const VolumeOverflow = styled.div`
+  overflow: hidden;
+
+  background-color: #eee;
+
+  /* border: 1px solid black; */
+  border-style: solid;
+  border-width: 1px;
+  border-color: transparent transparent #ccc #ccc;
+  box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.1);
+
+  width: 30px;
   height: 118px;
-  border: 1px solid black;
   position: absolute;
 
   bottom: 30px;
-  left: 10px;
 
-  display: ${props => props.isMouseIn ? "inline-block" : none}
-`
+  div {
+    /* transition:  */
+
+    :nth-child(1) {
+      top: ${props => props.volumeOffset}px;
+      left: 10px;
+      width: 8px;
+      height: 8px;
+      border: none;
+      border-radius: 50%;
+      background-color: #f50;
+      position: absolute;
+      z-index: 1;
+    }
+    :nth-child(2) {
+      top: ${props => props.volumeOffset}px;
+      left: 13px;
+      width: 2px;
+      height: ${props => 100 - props.volumeOffset}px;
+      border: none;
+      background-color: #f50;
+      position: absolute;
+      z-index: 1;
+    }
+    :nth-child(3) {
+      top: 10px;
+      left: 13px;
+      width: 2px;
+      height: 90px;
+      border: none;
+      background-color: gray;
+      position: absolute;
+    }
+  }
+`;
