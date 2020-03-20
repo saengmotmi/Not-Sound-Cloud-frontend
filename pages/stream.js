@@ -30,7 +30,7 @@ const song = {
   song_path: "2.mp3"
 };
 
-const datatest = [31, 25, 24, 23, 22, 21]
+const datatest = [31, 25, 24, 7, 22, 18, 10]
 
 const Stream = () => {
   const [musicData, setMusicData] = useState(null);

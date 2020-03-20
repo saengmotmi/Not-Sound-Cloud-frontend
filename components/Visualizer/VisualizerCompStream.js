@@ -5,8 +5,6 @@ import VisualComment from './VisualizerComment';
 
 
 const VisualizerComp = (props) => {
-  
-  
   const {
     repost_id,
     repost_img_src,
@@ -35,6 +33,8 @@ const VisualizerComp = (props) => {
 
   const canvasRefTop = useRef(null);
   const canvasRefBot = useRef(null);
+  const canvasRefOver1 = useRef(null);
+  const canvasRefOver2 = useRef(null);
 
   const [musicData, setMusicData] = useState(null);
   const [canvasWidth, setCanvasWidth] = useState(0);
@@ -98,6 +98,8 @@ const VisualizerComp = (props) => {
 
     const ctxTop = canvasRefTop.current.getContext("2d");
     const ctxBot = canvasRefBot.current.getContext("2d");
+    const ctxOver1 = canvasRefOver1.current.getContext("2d");
+    const ctxOver2 = canvasRefOver2.current.getContext("2d");
 
     ctxTop.clearRect(0, 0, canvasRefTop.current.width, canvasRefTop.current.height);
     ctxBot.clearRect(0, 0, canvasRefBot.current.width, canvasRefBot.current.height);
@@ -114,8 +116,10 @@ const VisualizerComp = (props) => {
     j = "";
 
     for (j of dataUpscale) {
-      ctxTop.fillRect(i, 80, 2.2, -1 * j); // x, y 시작점, width, height
-      ctxBot.fillRect(i, 0, 2.2, 0.5 * j); // x, y 시작점, width, height
+      ctxTop.fillRect(i, 80, 2.2, -0.8 * j); // x, y 시작점, width, height
+      ctxOver1.fillRect(i, 80, 2.2, -0.8 * j); // x, y 시작점, width, height
+      ctxOver2.fillRect(i, 80, 2.2, -0.8 * j); // x, y 시작점, width, height
+      ctxBot.fillRect(i, 0, 2.2, 0.4 * j); // x, y 시작점, width, height
       i += 3;
     }
   }, [musicData]);
@@ -169,15 +173,60 @@ const VisualizerComp = (props) => {
   };
 
   // 댓글 추가
-  const addComment = (e) => {
+  const sendComment = (msg) => {
+    // const commentData = msg;
+    console.log(msg);
+    const myHeaders = new Headers();
+    const token =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMDl9.1YoohK-pr62d_0Y7qrrRHyv03rar0DMn8eqZeG81u9s";
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", token);
+    fetch("http://10.58.1.163:8000/comment/3", {
+      method: "POST",
+      body: JSON.stringify(msg),
+      headers: myHeaders
+    })
+      .then(res => res.json())
+      .then(res => console.log("Success:", JSON.stringify(res)))
+      .catch(error => console.error("Error:", error));
+  };
+
+    const getComment = () => {
+      // const commentData = msg;
+      console.log(msg);
+      const myHeaders = new Headers();
+      const token =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMDl9.1YoohK-pr62d_0Y7qrrRHyv03rar0DMn8eqZeG81u9s";
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", token);
+      fetch("http://10.58.1.163:8000/comment/3", {
+        method: "GET",
+        headers: myHeaders
+      })
+        .then(res => res.json())
+        .then(res => console.log("Success:", JSON.stringify(res)))
+        .then(res => setComdata([...comdata, res]))
+        .catch(error => console.error("Error:", error));
+    };
+
+  // 댓글 추가
+  const addComment = e => {
+    const tempData = {
+      content: inputComment,
+      position: count,
+      song_id: 3 };
+    // setComdata(tempData);
+    sendComment(tempData);
+
+    setComdata([...comdata, tempData])
+
     if (e.keyCode === 13) {
-      const tempData = [...comdata];
-      tempData.push({ user_id: "오종", content: inputComment, position: count });
-      setComdata(tempData);
       setInputID("");
       setInputComment("");
     }
-  };
+    
+
+  }
 
   const onCanvasMove = (e) => {
     setCanvasWidth(e.nativeEvent.offsetX);
@@ -255,8 +304,16 @@ const VisualizerComp = (props) => {
               height="60"
               ref={canvasRefBot}
             />
-            <OverDiv isPlay={count} mouseOn="y" widthProps={`${canvasWidth}`} />
-            <OverDiv mouseOn="n" widthProps={`${canvasWidth}`} />
+            <OverDivWrapper
+              isPlay={count}
+              mouseOn="y"
+              widthProps={`${canvasWidth}`}
+            >
+              <OverDiv ref={canvasRefOver2} width="640" height="80" />
+            </OverDivWrapper>
+            <OverDivWrapper mouseOn="n" widthProps={`${canvasWidth}`}>
+              <OverDiv ref={canvasRefOver1} width="640" height="80" />
+            </OverDivWrapper>
             {commentArr}
           </CanvasContainer>
           <CommentContainer>
@@ -286,7 +343,7 @@ const VisualizerComp = (props) => {
             </AcitonBtn>
             <PlayCount>
               <div className="play-img"></div>
-              <span>{play_count.toLocaleString()}</span>
+              {/* <span>{play_count.toLocaleString()}</span> */}
               <div className="cmnt-img"></div>
               <span>{comment_count}</span>
             </PlayCount>
@@ -312,21 +369,33 @@ const Canvas = styled.canvas`
   z-index: 10;
 `;
 
-const OverDiv = styled.div`
-  background-color: salmon;
-  opacity: ${(props) => (props.mouseOn === 'y' ? 0.3 : 0.2)};
-  z-index: ${(props) => (props.mouseOn === 'y' ? 5 : 6)};
+const OverDiv = styled.canvas`
+  /* background-color: salmon; */
+  /* opacity: ${props => (props.mouseOn === "y" ? 0.8 : 0.8)}; */
+  
   position: absolute;
   top: 0;
   left: 0;
-  width: ${(props) => {
-    if (props.mouseOn === 'y') {
+  width: 640px;
+  height: 80px;
+`;
+
+const OverDivWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${props => {
+    if (props.mouseOn === "y") {
       return props.isPlay;
-    } if (props.mouseOn === 'n') {
+    }
+    if (props.mouseOn === "n") {
       return props.widthProps;
     }
   }}px;
   height: 80px;
+  overflow: hidden;
+  background-color: transparent;
+  z-index: ${props => (props.mouseOn === "y" ? 5 : 6)};
 `;
 
 const CanvasContainer = styled.div`
