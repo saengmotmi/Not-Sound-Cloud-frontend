@@ -10,8 +10,9 @@ const theme = {
   gray: "#999",
   lGray: "#ccc",
   snow: "#e5e5e5",
-  fontGlobal: "'Noto Sans KR', Roboto, sans-serif",
-  font: "'Noto Sans KR', Roboto, sans-serif"
+  lsnow: "#F2F2F2",
+  fontGlobal: "Roboto,'Noto Sans KR', , sans-serif",
+  font: "Roboto,'Noto Sans KR', sans-serif"
 };
 
 
