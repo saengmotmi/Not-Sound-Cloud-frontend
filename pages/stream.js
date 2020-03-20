@@ -2,10 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import styled, {
   createGlobalStyle,
   ThemeProvider,
-  css
 } from "styled-components";
-import VisualizerCompStream from '../components/VisualizerCompStream';
-import MusicStreaming from "./MusicStreaming";
+import VisualizerCompStream from '../components/Visualizer/VisualizerCompStream';
 import Layout from "../components/layout/Layout";
 import theme from "../global/theme";
 import BottomPlayer from "../components/bottomPlayer/BotPlayer";
@@ -29,7 +27,7 @@ import reset from "styled-reset";
 //   song_path: "2.mp3"
 // };
 
-const datatest = [1,2,3,4,5]
+const datatest = [26, 25, 24, 23, 22, 21]
 
 const Stream = () => {
   const [musicData, setMusicData] = useState(null);
@@ -40,51 +38,49 @@ const Stream = () => {
   const [context, setContext] = useState(null); // 일시정지에 사용
   const [isPlaying, setIsPlaying] = useState(false); // 재생 중 여부
   const [isPause, setIsPause] = useState(false); // 일시 정지 여부
-  const [musicNum, setMusicNum] = useState(1); // 입력된 song_id
+  const [musicNum, setMusicNum] = useState(1); // 입력된 song_id, 이제 사용하면 안됨
   const [currentMusicNum, setCurrentMusicNum] = useState("1"); // 재생, 파형 클릭 시점의 song_id
   const [navUp, setNavUp] = useState(""); // 하단 바 애니메이션
 
   useEffect(() => {
     setNavUp("botPlayer up"); // 하단바 올라오는 거
+    // getMusicInfoApi(1, 0);
   }, []);
 
-  useEffect(() => {
-    getMusicInfoApi();
-  }, []);
-
-  useEffect(() => {
-    //buffer updated
-    if (musicNum === currentMusicNum) {
-      setCurrentTime(buffer.duration); //same musicNum
-    } else if (musicNum !== currentMusicNum) {
-      setDuration(buffer.duration); //diff musicNum
-    }
-  }, [buffer]);
+  // useEffect(() => {
+  //   //buffer updated
+  //   console.log("music, curruent", musicNum, currentMusicNum)
+  //   if (musicNum === currentMusicNum) {
+  //     setCurrentTime(buffer.duration); //same musicNum
+  //   } else if (musicNum !== currentMusicNum) {
+  //     setDuration(buffer.duration); //diff musicNum
+  //   }
+  // }, [buffer]);
 
   // 스트리밍 버튼
-  const getMusicApi = async startSec => {
+  const getMusicApi = async (id, startSec) => {
     // load audio file from server
     if (isPlaying) {
       await musicStop(); // 만약 재생 중이면 일단 정지
       console.log("stop");
     }
     console.log(startSec + "를 요청합니다");
-    await fetch(`http://10.58.3.91:8000/song/playview/${musicNum}/${startSec}`)
+    await fetch(`http://10.58.3.91:8000/song/playview/${id}/${startSec}`)
       .then(res => res.arrayBuffer())
-      .then(res => musicPlay(res));
+      .then(res => musicPlay(id, res));
 
-    await getMusicInfoApi();
+    // await getMusicInfoApi();
   };
 
-  const getMusicInfoApi = () => {
-    fetch(`http://10.58.3.91:8000/song/play/${musicNum}`)
-      .then(res => res.json())
-      .then(res => setMusicData(res.song[0]));
-  };
+  // const getMusicInfoApi = () => {
+  //   fetch(`http://10.58.3.91:8000/song/play/${musicNum}`)
+  //     .then(res => res.json())
+  //     .then(res => setMusicData(res.song[0]));
+  // };
 
   // play 버튼
-  const musicPlay = async res => {
-    console.log(res);
+  const musicPlay = async (id, res) => {
+    console.log(id, res);
 
     // create audio context
     const getAudioContext = () => {
@@ -101,10 +97,20 @@ const Stream = () => {
 
     source.buffer = audioBuffer;
     source.connect(audioContext.destination);
+    
+    
+    console.log("music, curruent", musicNum, currentMusicNum)
+
+    if (id === currentMusicNum) {
+      setCurrentTime(buffer.duration); //same musicNum
+    } else if (id !== currentMusicNum) {
+      setDuration(buffer.duration); //diff musicNum
+    }
+    
     setMusic(source);
     setBuffer(audioBuffer);
     setContext(audioContext);
-    setCurrentMusicNum(musicNum); // 현재 재생 중인 song_id
+    setCurrentMusicNum(id); // 현재 재생 중인 song_id
     console.log("ready to play");
 
     source.start();
@@ -136,14 +142,19 @@ const Stream = () => {
   };
 
   // visualizer에 props로 주는 함수
-  const showOffsetX = offsetX => {
+  const showOffsetX = (id, offsetX) => {
     console.log(offsetX);
 
     if (isPlaying) {
-      getMusicApi(Math.round((offsetX / 640) * duration)); // 퍼센트 x 전체 길이
-      console.log(Math.round((offsetX / 640) * duration) + "초 재생 요청");
-    } else {
-      getMusicApi(0);
+
+      if (id === currentMusicNum) {
+        getMusicApi(id, Math.round((offsetX / 640) * duration)); // 퍼센트 x 전체 길이
+        console.log(Math.round((offsetX / 640) * duration) + "초 재생 요청");
+      } else if (id !== currentMusicNum) {
+        getMusicApi(id, 0)
+      }
+    } else if (!isPlaying) {
+      getMusicApi(id, 0);
     }
   };
 

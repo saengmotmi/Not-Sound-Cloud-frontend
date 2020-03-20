@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
+import UploadInfo from '../components/upload/UploadInfo'
 import theme from '../global/theme';
 
 const Upload = () => {
@@ -118,18 +119,6 @@ const uploadFiles = (e) => {
   return (
     <>
       <div>사용 용량</div>
-      {/* <button type="button" onClick={getRecommendUser}>
-        추천 유저
-      </button>
-      <button type="button" onClick={sendMessage}>
-        메시지 전송
-      </button>
-      <button type="button" onClick={getMessageNav}>
-        메시지 Nav
-      </button>
-      <button type="button" onClick={getMessageAllToUser}>
-        메시지 All
-      </button> */}
       <DivWrapper onDragOver={dragOver} onDragLeave={dragOver} onDrop={uploadFiles} >
         <p>Drag and drop your tracks & albums here</p>
         <FileInput>
@@ -152,6 +141,7 @@ const uploadFiles = (e) => {
           <input name="radio" type="radio" />
           Private
         </label>
+        <UploadInfo />
       </DivWrapper>
     </>
   );
