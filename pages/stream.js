@@ -7,27 +7,30 @@ import VisualizerCompStream from '../components/Visualizer/VisualizerCompStream'
 import Layout from "../components/layout/Layout";
 import theme from "../global/theme";
 import BottomPlayer from "../components/bottomPlayer/BotPlayer";
+import SideBar from "../components/sidebar/Sidebar";
 import store from "../redux/store";
 import { Provider, connect } from "react-redux";
 import reset from "styled-reset";
+import Sidebar from "../components/sidebar/Sidebar";
 
-// const song = {
-//   repost_id: "바다코끼리",
-//   repost_img_src:
-//     "https://i1.sndcdn.com/avatars-LFRcPhK9aBrPrGQV-O60JGw-t50x50.jpg",
-//   repost_time: 4, //reposted a track 4 hours ago
-//   post_id: "Ziiin",
-//   song_name: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
-//   small_img_url:
-//     "https://i1.sndcdn.com/artworks-bPFTZjehyPP0iCdP-FzXVUQ-t200x200.jpg",
-//   tag: "# Hip-hop & Rap",
-//   my_img_src: "https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg",
-//   play_count: 4706, // toLocaleString
-//   comment_count: 4,
-//   song_path: "2.mp3"
-// };
 
-const datatest = [26, 25, 24, 23, 22, 21]
+const song = {
+  repost_id: "바다코끼리",
+  repost_img_src:
+    "https://i1.sndcdn.com/avatars-LFRcPhK9aBrPrGQV-O60JGw-t50x50.jpg",
+  repost_time: 4, //reposted a track 4 hours ago
+  post_id: "Ziiin",
+  song_name: "DancingOnthetree(feat.김비노)(프라이머리-baby Remake)",
+  small_img_url:
+    "https://i1.sndcdn.com/artworks-bPFTZjehyPP0iCdP-FzXVUQ-t200x200.jpg",
+  tag: "# Hip-hop & Rap",
+  my_img_src: "https://i1.sndcdn.com/avatars-000031467940-4w3p6q-t20x20.jpg",
+  play_count: 4706, // toLocaleString
+  comment_count: 4,
+  song_path: "2.mp3"
+};
+
+const datatest = [31, 25, 24, 23, 22, 21]
 
 const Stream = () => {
   const [musicData, setMusicData] = useState(null);
@@ -197,7 +200,7 @@ const Stream = () => {
         setMusicNum={setMusicNum}
         currentNowTime={currentNowTime}
         setCurrentNowTime={setCurrentNowTime}
-        // {...song}
+        {...song}
       ></VisualizerCompStream>
     </div>
   ));
@@ -208,32 +211,35 @@ const Stream = () => {
         <GlobalStyle />
         <ThemeProvider theme={theme}>
           <Layout>
-            <StreamContainer>
-              <StreamLeft>
-                왼쪽
-                <p className="top-msg">
-                  Hear the latest posts from the people you’re following:
-                </p>
-                {vctest}
-              </StreamLeft>
-              <StreamRight>오른쪽</StreamRight>
-            </StreamContainer>
-            <BottomPlayer
-              isPlaying={isPlaying}
-              isPause={isPause}
-              musicPause={musicPause}
-              getMusicApi={getMusicApi}
-              musicStop={musicStop}
-              buffer={buffer}
-              musicNum={musicNum}
-              currentMusicNum={currentMusicNum}
-              currentTime={currentTime}
-              duration={duration}
-              interval={duration ? 640 / duration : 1}
-              navUp={navUp}
-              setVolume={setVolume}
-              currentNowTime={currentNowTime}
-            />
+            <HelpMe>
+              <StreamContainer>
+                <StreamLeft>
+                  <p className="top-msg">
+                    Hear the latest posts from the people you’re following:
+                  </p>
+                  {vctest}
+                </StreamLeft>
+                <StreamRight>
+                  <Sidebar />
+                </StreamRight>
+              </StreamContainer>
+              <BottomPlayer
+                isPlaying={isPlaying}
+                isPause={isPause}
+                musicPause={musicPause}
+                getMusicApi={getMusicApi}
+                musicStop={musicStop}
+                buffer={buffer}
+                musicNum={musicNum}
+                currentMusicNum={currentMusicNum}
+                currentTime={currentTime}
+                duration={duration}
+                interval={duration ? 640 / duration : 1}
+                navUp={navUp}
+                setVolume={setVolume}
+                currentNowTime={currentNowTime}
+              />
+            </HelpMe>
           </Layout>
         </ThemeProvider>
       </Provider>
@@ -250,7 +256,18 @@ const GlobalStyle = createGlobalStyle`
 
 export default Stream;
 
+const HelpMe = styled.div`
+  background-color: ${theme.lsnow};
+  width: 100vw;
+  height: 100%;
+`
+
 const StreamLeft = styled.div`
+  p {
+    font-family: ${theme.font};
+    margin-bottom: 20px;
+  }
+
   display: flex;
   flex-direction: column;
   border-right: 1px solid #f2f2f2;
@@ -265,7 +282,7 @@ const StreamLeft = styled.div`
 `;
 
 const StreamRight = styled.div`
-
+  margin-top: 50px;
 
 `;
 
@@ -274,6 +291,10 @@ const StreamContainer = styled.div`
   width: 1240px;
   margin: 0 auto;
   padding: 0 30px 0 30px;
+  display: flex;
+  flex-direction: row;
+
+  margin-top: 30px;
 `;
 
 const StreamBg = styled.div`

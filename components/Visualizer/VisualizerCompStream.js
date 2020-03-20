@@ -5,6 +5,8 @@ import VisualComment from './VisualizerComment';
 
 
 const VisualizerComp = (props) => {
+  
+  
   const {
     repost_id,
     repost_img_src,
@@ -284,7 +286,7 @@ const VisualizerComp = (props) => {
             </AcitonBtn>
             <PlayCount>
               <div className="play-img"></div>
-              {/* <span>{play_count.toLocaleString()}</span> */}
+              <span>{play_count.toLocaleString()}</span>
               <div className="cmnt-img"></div>
               <span>{comment_count}</span>
             </PlayCount>
