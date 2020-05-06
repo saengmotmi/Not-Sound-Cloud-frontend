@@ -5,12 +5,10 @@ import * as icons from "@fortawesome/free-solid-svg-icons";
 import theme, * as css from "../../global/theme";
 import UserAvartar from "../userAvatar/UserAvatar";
 
-
-const List = ({li}) => {
-
+const List = ({ li }) => {
   return (
     <Li>
-      <UserAvartar size="50px" />
+      <UserAvartar url={li["follower_image"]} size="50px" />
       <PaddingWrap left="10px">
         <FirstLine>
           <div>
@@ -23,12 +21,12 @@ const List = ({li}) => {
         <SecondLine>
           <div>
             <FontAwesomeIcon icon={icons.faUser} />
-            <span>{li.userFallowers}</span>
+            <span>{li["follower_follower_count"]}</span>
             <FontAwesomeIcon
               icon={icons.faAlignCenter}
               style={{ transform: "rotate(270deg)" }}
             />
-            <span>{li.userTrack}</span>
+            <span>{li["follower_song_count"]}</span>
           </div>
           <FollowBtn>
             <span>
@@ -46,7 +44,7 @@ const List = ({li}) => {
 }
 
 
-export default List
+export default List;
 
 const Li = styled.li`
   cursor: pointer;
@@ -66,19 +64,19 @@ const Li = styled.li`
 `;
 
 const PaddingWrap = styled.div`
-/* padding-right: ${(props) => props.right || "10px"}; */
-padding-left: ${(props) => props.left || "10px"};
-padding-top: ${(props) => props.top || "0"}; 
-padding-bottom: ${(props) => props.bottom || "0"};
+/* padding-right: ${props => props.right || "10px"}; */
+padding-left: ${props => props.left || "10px"};
+padding-top: ${props => props.top || "0"}; 
+padding-bottom: ${props => props.bottom || "0"};
 `;
 
-
-const FirstLine = styled.p`
+const FirstLine = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   width: 280px;
   padding-bottom: 4px;
+
   div:first-child {
     display: flex;
     justify-content: flex-start;
@@ -105,7 +103,7 @@ const UserName = styled.span`
 `;
 
 
-const SecondLine = styled.p`
+const SecondLine = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,6 +111,7 @@ const SecondLine = styled.p`
   width: 280px;
   height: 24px;
   font-size: 10px;
+  padding-top: 3px;
   span {
     padding: 0 10px 0 5px;
   }
@@ -128,7 +127,7 @@ const FollowBtn = styled.div`
   justify-content: flex-end;
   margin-left: 5px;
   border: none;
-  padding: 6px;
+  padding: 4px;
   border-radius: 3px;
   background-color: ${theme.black};
   border: 1px solid ${theme.chacoal};

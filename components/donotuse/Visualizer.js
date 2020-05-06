@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import theme from '../global/theme';
+import theme from '../../global/theme';
 import VisualComment from '../components/VisualizerComment';
 
 
-const Visualizer = () => {
+const Visualizer = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const canvasRefTop = useRef(null);
   const canvasRefBot = useRef(null);
@@ -158,8 +158,17 @@ const getComment = () => {
       if (pos === 'top') {
         console.log(`${Math.ceil(e.nativeEvent.offsetX / 640 * 100)}%`);
 
-        setCanvasWidth(e.nativeEvent.offsetX);
-        setCount(e.nativeEvent.offsetX);
+        if (props.isPlaying) {
+          setCanvasWidth(e.nativeEvent.offsetX);
+          setCount(e.nativeEvent.offsetX);
+          props.offsetX(e.nativeEvent.offsetX);
+        } else {
+          setCanvasWidth(0);
+          setCount(0);
+          props.offsetX(0);
+        }
+
+        
       } else if (pos === 'bot') {
         console.log('bot'); // 댓글을 어떻게든 해야지
       }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
-import theme from "../global/theme";
+import theme from "../../global/theme";
 
 const UploadInfo = () => {
   const a = 0;

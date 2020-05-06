@@ -20,17 +20,17 @@ const { asideData, sectionData } = props;
 // console.log('어싸이드데이터',asideData);
 // console.log("섹션데이터", sectionData);
   return (
-    <Provider store={store}>
-      <GlobalStyle />
-      <Head></Head>
-      <Layout>
+    // <Provider store={store}>
+      // <GlobalStyle />
+      // {/* <Head></Head> */}
+      // {/* <Layout> */}
         <MessageSection
           asideData={asideData}
           reloadMsgData={reloadMsgData}
           setReloadMsgData={setReloadMsgData}
         />
-      </Layout>
-    </Provider>
+      // {/* </Layout> */}
+    // </Provider>
   );
 }
 

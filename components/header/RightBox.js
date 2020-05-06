@@ -25,11 +25,6 @@ import {
   USER
 } from "../../global/api";
 
-
-
-
-
-
 const RightBox = (props) => {
     // 프롭스 디스트럭처
     const {
@@ -145,58 +140,67 @@ const RightBox = (props) => {
       <>
         <RightWrap>
           <Ul>
-            <Link href="/">
+            <Link href="/upload">
               <Li
                 nav
                 on={checkId(4)}
                 style={{}}
                 onClick={() => {
                   changeNav(checkCurrentNav(4));
-                }}>
+                }}
+              >
                 Upload
               </Li>
             </Link>
-            <Li
-              on={checkId(5)}
-              onClick={() => {
-                changeNav(checkCurrentNav(5));
-              }}
-              style={{width:'131px'}}>
-              <MarginWrap right="13px">
-                {<UserAvatar size="25px" url={userData['user_image']} />} 
-              </MarginWrap>
-              {userData["user_name"]}
-              <MarginWrap left="10px">
-                <FontAwesomeIcon
-                  icon={faChevronDown}
-                  style={{
-                    fontSize: "10px"
-                  }}
-                />
-              </MarginWrap>
-            </Li>
+            <Link href="/login">
+              <Li
+                on={checkId(5)}
+                onClick={() => {
+                  changeNav(checkCurrentNav(5));
+                }}
+                style={{ width: "131px" }}
+              >
+                <MarginWrap right="13px">
+                  <UserAvatar
+                    size="25px"
+                    url={userData && userData["user_image"]}
+                  />
+                </MarginWrap>
+                {userData && userData["user_name"]}
+                <MarginWrap left="10px">
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    style={{
+                      fontSize: "10px",
+                    }}
+                  />
+                </MarginWrap>
+              </Li>
+            </Link>
             <Li // noti
               on={checkId(6)}
-              onClick={onClickNoti}>
+              onClick={onClickNoti}
+            >
               {!notiChacked && <RedDot />}
               <MarginWrap left="15px" right="15px">
                 <FontAwesomeIcon
                   icon={faBell}
                   style={{
-                    fontSize: "18px"
+                    fontSize: "18px",
                   }}
                 />
               </MarginWrap>
             </Li>
             <Li // message
               on={checkId(7)}
-              onClick={onClickMessageBtn}>
+              onClick={onClickMessageBtn}
+            >
               {!messageChacked && <RedDot />}
               <MarginWrap left="15px" right="15px">
                 <FontAwesomeIcon
                   icon={faEnvelope}
                   style={{
-                    fontSize: "18px"
+                    fontSize: "18px",
                   }}
                 />
               </MarginWrap>
@@ -205,12 +209,13 @@ const RightBox = (props) => {
               on={checkId(8)}
               onClick={(e) => {
                 changeNav(checkCurrentNav(8));
-              }}>
+              }}
+            >
               <MarginWrap left="15px" right="15px">
                 <FontAwesomeIcon
                   icon={faEllipsisH}
                   style={{
-                    fontSize: "20px"
+                    fontSize: "20px",
                   }}
                 />
               </MarginWrap>

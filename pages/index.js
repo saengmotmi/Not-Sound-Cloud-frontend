@@ -1,35 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import { createGlobalStyle, ThemeProvider, css } from 'styled-components';
-import reset from 'styled-reset';
-import { Provider, connect } from 'react-redux';
-import store from '../redux/store'
-import theme from "../global/theme";
-import Layout from '../components/layout/Layout';
-import Stream from '../pages/stream'
-import Login from './../components/login'
+import Home from '../pages/home'
 
-const Home = () => {
-  return (
-    <Provider store={store}>
-      <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <div className="container">
-          <Head>
-            <title>SoundCloud</title>
-          </Head>
-          <Layout>
-            <Stream />
-            <Login></Login>
-          </Layout>
-        </div>
-      </ThemeProvider>
-    </Provider>
-  );
+const Index = () => {
+  return (<Home />);
 };
 
-const GlobalStyle = createGlobalStyle`
-  ${reset};
-`;
-
-export default Home;
+export default Index;
