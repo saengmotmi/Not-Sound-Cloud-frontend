@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2019, // ecma 문법 버전
+    "ecmaVersion": 9, // ecma 문법 버전
     "sourceType": "module", // import, export 사용한다는 의미
     "ecmaFeatures": {
       "jsx": true // jsx 사용
