@@ -1,11 +1,12 @@
-import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import theme from '../global/theme';
+import { googleSDK } from '../global/func'
+import Head from "next/head";
 
-const responseGoogle = (response) => {
-  console.log(response);
-};
+// const responseGoogle = (response) => {
+//   console.log(response);
+// };
 
 const Login = (props) => {
   const [modalOn, setModalOn] = useState(true);
@@ -15,53 +16,9 @@ const Login = (props) => {
   const googleLoginBtn = useRef(null);
 
   useEffect(() => {
-    googleSDK();
+  //   googleSDK(googleLoginBtn);
+    modalShow()
   },[]);
-
-  const googleSDK = () => {
-    // 구글 SDK 초기 설정
-    window.googleSDKLoaded = () => {
-      console.log(window.gapi);
-      window.gapi.load('auth2', () => {
-        const auth2 = window.gapi.auth2.init({
-          client_id:
-            "341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com",
-          scope: "profile email"
-        });
-        console.log(googleLoginBtn, auth2);
-        auth2.attachClickHandler(
-          googleLoginBtn.current, // useRef랑 current!!!!!
-          {},
-          (googleUser) => {
-            const profile = googleUser.getBasicProfile();
-            console.log(profile);
-            console.log(`Token || ${googleUser.getAuthResponse().id_token}`);
-            setToken(googleUser.getAuthResponse().id_token);
-            console.log(`ID: ${profile.getId()}`);
-            console.log(`Name: ${profile.getName()}`);
-            console.log(`Image URL: ${profile.getImageUrl()}`);
-            console.log(`Email: ${profile.getEmail()}`);
-            GoogleApiPOST(googleUser.getAuthResponse().id_token);
-          },
-          (error) => {
-            alert(JSON.stringify(error, undefined, 2));
-          },
-        );
-      });
-    };
-    // 구글 SDK 로드
-    (function (d, s, id) {
-      let js;
-      const fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {
-        return;
-      }
-      js = d.createElement(s);
-      js.id = id;
-      js.src = 'https://apis.google.com/js/platform.js?onload=googleSDKLoaded';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'google-jssdk'));
-  };
 
   const modalShow = () => {
     if (!isEntered) {
@@ -71,7 +28,7 @@ const Login = (props) => {
           setModalOnDisp(!modalOnDisp);
         }, 600);
       } else {
-        googleSDK();
+        googleSDK(googleLoginBtn);
         setModalOnDisp(!modalOnDisp);
       }
     }
@@ -84,35 +41,8 @@ const Login = (props) => {
     });
   };
 
-  const GoogleApiPOST = (token) => {
-    console.log(typeof token, token)
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    fetch("http://10.58.3.91:8000/user/sign-up/google", {
-      method: "POST",
-      // body: {id_token: JSON.stringify(token)},
-      // body: JSON.stringify(token),
-      body: JSON.stringify({"id_token": token}), //객체 형식으로 만들어주고 stringify를 해야 함
-      headers: myHeaders
-    })
-      .then(res => res.json())
-      .then(res => console.log("Success:", JSON.stringify(res))) // 서버에서 내부 토큰 리턴
-      .catch(error => console.error("Error:", error));
-  };
-
   return (
-    <>
-      <Head>
-        <script
-          src="https://apis.google.com/js/platform.js?onload=init"
-          async
-          defer
-        />
-        <meta
-          name="google-signin-client_id"
-          content="341320998084-ol8q2551v6419v6pusj22vbb4k5cpl8v.apps.googleusercontent.com"
-        />
-      </Head>
+    <LoginComp>
       <button type="button" onClick={signOut}>
         log out
       </button>
@@ -159,11 +89,22 @@ const Login = (props) => {
           </div>
         </LoginWrapper>
       </LoginContainer>
-    </>
+    </LoginComp>
   );
 };
 
 export default Login;
+
+const LoginComp = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* margin-top: 50px; */
+
+  z-index: 500000;
+
+`;
 
 const GoogleLogin = styled.div`
   #customBtn {
