@@ -90,19 +90,21 @@ class AxiosClient {
   };
 
   sendSms = async ({ code, content, button }) => {
-    const params = parseQs({
-      senderkey: SENDER_KEY,
-      tpl_code: code,
-      sender: SENDER_PHONE_NUM,
-      receiver_1: "01041406734",
-      recvname_1: "오종택",
-      subject_1: "제목",
-      message_1: content,
-      button_1: JSON.stringify(button),
-    });
+    try {
+      const params = parseQs({
+        senderkey: SENDER_KEY,
+        tpl_code: code,
+        sender: SENDER_PHONE_NUM,
+        receiver_1: "01041406734",
+        recvname_1: "오종택",
+        subject_1: "제목",
+        message_1: content,
+        button_1: JSON.stringify(button),
+      });
 
-    const res = await this.client.post(URL.sms, params);
-    console.log(res);
+      const res = await this.client.post(URL.sms, params);
+      console.log(res);
+    } catch (error) {}
   };
 }
 
